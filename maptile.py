@@ -4,6 +4,7 @@ tiles. Tiles can hold an enemy or a tower.
 """
 
 import pygame
+import os
 
 """
 Constants used to define the type of map tile this is.
@@ -39,10 +40,17 @@ class Tile:
     def getSprite(self, group):
         if(self.sprite == None): # Generate the sprite from an image
             self.sprite = pygame.sprite.Sprite(group)
+            name = None # The name of the image to use
             if(self.type == PATH):
-                self.sprite.image = pygame.image.load("images/path.png")
-            else: # No other tiles supported at the moment
-                self.sprite.image = pygame.image.load("images/plot.png")
+                name = "path.png"
+            elif(self.type == START):
+                name = "start.png"
+            elif(self.type == DESTINATION):
+                name = "end.png"
+            else: # Buildable tile by default
+                name = "plot.png"
+            # The os.path.join() function is used for cross platform compatibility
+            self.sprite.image = pygame.image.load(os.path.join("images", name))
             # Set the position of the sprite using a rectangle
             width = self.sprite.image.get_width()
             height = self.sprite.image.get_height()
