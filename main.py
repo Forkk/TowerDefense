@@ -6,6 +6,8 @@ import pygame
 import sys
 import gamemap
 import os
+import gamedata
+import userinterface
 
 """
 The dimensions for the screen. These should remain constant.
@@ -34,6 +36,12 @@ def setup():
     print ScreenSurface.get_height()
     # Set up the map
     global Map
+    # Set up the starting game data
+    global Data
+    Data = gamedata.GameData()
+    # Set up the UI
+    global UI
+    UI = userinterface.UserInterface()
     Map = gamemap.GameMap("map1")
 
 """
@@ -71,7 +79,8 @@ Handles any updating of game objects. This is called
 once per game loop.
 """
 def update():
-    return
+    # Update the UI
+    UI.update(Data)
 
 """
 Draws all game objects to the screen. This is called once
@@ -80,6 +89,8 @@ per game loop.
 def draw():
     # Draw the map
     Map.draw(ScreenSurface)
+    # Draw the UI
+    UI.draw(ScreenSurface)
 
 """
 Handles a single keyboard event (both key down and key up).
