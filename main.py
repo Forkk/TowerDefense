@@ -8,12 +8,23 @@ import gamemap
 import os
 import gamedata
 import userinterface
+import enemymanager
 
 """
 The dimensions for the screen. These should remain constant.
 """
 SCREEN_WIDTH = 1024
 SCREEN_HEIGHT = 768
+
+"""
+The max number of frames per second for the game.
+"""
+MAX_FPS = 60
+
+"""
+The game clock
+"""
+GameClock = None
 
 """
 The title of the game. This should remain constant.
@@ -32,8 +43,6 @@ def setup():
     # Set up a new window.
     global ScreenSurface
     ScreenSurface = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-    print ScreenSurface.get_width()
-    print ScreenSurface.get_height()
     # Set up the map
     global Map
     # Set up the starting game data
@@ -43,6 +52,11 @@ def setup():
     global UI
     UI = userinterface.UserInterface()
     Map = gamemap.GameMap("map1")
+    # Initialize the enemy manager
+    global EnemyManager
+    EnemyManager = enemymanager.EnemyManager()
+    global GameClock
+    GameClock = pygame.time.Clock()
 
 """
 This handles a single pygame event.
@@ -54,6 +68,8 @@ def handleEvent(event):
         # Quit the program safely
         pygame.quit()
         sys.exit()
+    else:
+        EnemyManager.spawnEnemy(event)
 
 """
 This is the main game loop, called as many times as
@@ -72,6 +88,9 @@ def main():
         update() # Update the game objects
         draw() # Draw all the game objects
         pygame.display.flip()
+
+        # Maintain the max frame rate
+        GameClock.tick(MAX_FPS)
        
 
 """
@@ -81,6 +100,8 @@ once per game loop.
 def update():
     # Update the UI
     UI.update(Data)
+    # Update the enemies
+    EnemyManager.update()
 
 """
 Draws all game objects to the screen. This is called once
@@ -91,6 +112,8 @@ def draw():
     Map.draw(ScreenSurface)
     # Draw the UI
     UI.draw(ScreenSurface)
+    # Draw the enemies
+    EnemyManager.draw(ScreenSurface)
 
 """
 Handles a single keyboard event (both key down and key up).
