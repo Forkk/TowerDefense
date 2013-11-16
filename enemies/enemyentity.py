@@ -8,7 +8,7 @@ import enemybase
 import pygame
 import maptile
 
-class EnemyEntity():
+class EnemyEntity(object):
     '''
     The class that represents every entity
     properties:

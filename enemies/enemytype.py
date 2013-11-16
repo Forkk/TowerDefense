@@ -7,7 +7,7 @@ Created on Nov 16, 2013
 import pygame
 import os
 
-class enemytype():
+class EnemyType(object):
     '''
     A singleton instance of an entityType
     default_health
@@ -21,13 +21,6 @@ class enemytype():
         self.name = enemyIdName
         self.default_health = health
         self.default_speed = speed
-        self.images = (
-                        pygame.image.load(os.path.join(self.IMAGE_PATH, self.name + "_1" + ".png")),
-                        pygame.image.load(os.path.join(self.IMAGE_PATH, self.name + "_2" + ".png")),
-                        pygame.image.load(os.path.join(self.IMAGE_PATH, self.name + "_3" + ".png")),
-                        pygame.image.load(os.path.join(self.IMAGE_PATH, self.name + "_4" + ".png")),
-                        pygame.image.load(os.path.join(self.IMAGE_PATH, self.name + "_5" + ".png")),
-                       )
     
     def initEntity(self, entity):
         pass

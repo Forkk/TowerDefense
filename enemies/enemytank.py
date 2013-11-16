@@ -7,13 +7,13 @@ import enemytype
 import os
 import pygame
 
-class EnemyTank(enemytype):
+class EnemyTank(enemytype.EnemyType):
     '''
     tank
     '''
 
     def __init__(self):
-        super(self).__init__("tank")
+        super(EnemyTank, self).__init__("tank")
         self.images = (
                        pygame.image.load(os.path.join(self.IMAGE_PATH, self.name + "_1" + ".png")),
                        pygame.image.load(os.path.join(self.IMAGE_PATH, self.name + "_2" + ".png")),
