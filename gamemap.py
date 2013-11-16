@@ -49,14 +49,22 @@ class GameMap:
                             self.start = self.tiles[x][index-2]
                         elif(self.tiles[x][index-2].type == maptile.DESTINATION):
                             self.dest = self.tiles[x][index-2]
+             # Initialize the tile size
+            self.tilewidth = surface.get_width()/self.numColumns
+            self.tileheight = surface.get_height()/self.numRows
+            if(self.tilewidth < self.tileheight):
+                self.tileheight = self.tilewidth
+            else:
+                self.tilewidth = self.tileheight
+
             # Add the tiles to a sprite group
             self.spritegroup = pygame.sprite.Group()
-            size = self.getSize(surface)
+            size = self.getTileSize()
             for tilelist in self.tiles:
                 for tile in tilelist:
                     tile.getSprite(self.spritegroup, size)
-      
 
+           
     """
     Draws the map to the screen (passed in as a surface).
     """
@@ -80,16 +88,15 @@ class GameMap:
     def getDestinationTile(self):
         return (self.dest.x, self.dest.y)
 
-    def getSize(self, screen):
-        width = screen.get_width()/self.numColumns
-        height = screen.get_height()/self.numRows
-        if(width < height):
-            return (width, width)
-        else:
-            return (height, height)
-            
+    def getTileSize(self):
+        return (self.tilewidth, self.tileheight)
+
+    def getMapSize(self):
+        return (self.tilewidth*self.numColumns, self.tileheight*self.numRows)
         
-        
+# A little trick so we can run the game from here in IDLE
+if __name__ == '__main__':
+    execfile("main.py")
         
 
         

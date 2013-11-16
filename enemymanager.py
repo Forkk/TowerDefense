@@ -63,7 +63,7 @@ class EnemyManager:
         # Update the enemies
         for enemy in EnemyManager.enemies:
             enemy.update(pygame.time.get_ticks()-self.last_update_time, mapdata)
-            if(enemy.dead()):
+            if(enemy.dead() or enemy.offscreen(mapdata)):
                 EnemyManager.enemies.remove(enemy)
                 enemy.sprite.kill() # Remove the sprite from the sprite group
         self.last_update_time = pygame.time.get_ticks()
@@ -95,5 +95,9 @@ class EnemyManager:
         if(event.type == EnemyManager.SPAWN_EVENT_BASIC):
             EnemyManager.enemies.append(enemy.Enemy(coordinates[0], coordinates[1],
                                                  EnemyManager.spritegroup, self.size))
+
+# A little trick so we can run the game from here in IDLE
+if __name__ == '__main__':
+    execfile("main.py")
         
 

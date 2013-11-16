@@ -7,7 +7,7 @@ import os
 import Queue
 
 DEFAULT_HEALTH = 100
-DEFAULT_SPEED = 5 # This is in number of pixels per second
+DEFAULT_SPEED = 0.1 # This is in number of pixels per second
 
 # The cardinal directions, used in pathfinding.
 DIRECTION_NORTH = 1
@@ -23,16 +23,13 @@ class Enemy:
     This also adds the enemy's sprite to the given sprite group.
     """
     def __init__(self, x, y, group, size):
-        self.x = x
-        self.y = y
         self.health = DEFAULT_HEALTH
         self.speed = DEFAULT_SPEED
         self.sprite = pygame.sprite.Sprite()
         self.direction = DIRECTION_NONE
         self.sprite.image = pygame.image.load(os.path.join("images", "enemy.png"))
         self.sprite.image = pygame.transform.scale(self.sprite.image, size)
-        self.sprite.rect = pygame.Rect(self.x, self.y, self.sprite.image.get_width(),
-                                       self.sprite.image.get_height())
+        self.sprite.rect = pygame.Rect(x, y, size[0], size[1])
         group.add(self.sprite)
 
     """
@@ -57,9 +54,7 @@ class Enemy:
         # If the direction is NONE, do nothing
 
         # Update the coordinates and rectangle
-        self.x += deltaX
-        self.y += deltaY
-        self.sprite.rect.move(deltaX, deltaY)
+        self.sprite.rect = self.sprite.rect.move(deltaX, deltaY)
 
     """
     Figure out which direction we should go. This uses a breadth-first
@@ -67,7 +62,7 @@ class Enemy:
     """
     def determineDirection(self, mapdata):
         # TODO: Implement this function!
-        return DIRECTION_NONE
+        return DIRECTION_SOUTH
 
 
         """
@@ -85,3 +80,26 @@ class Enemy:
             return True
         else:
             return False
+
+    """
+    Determines if the enemy is offscreen or not. This only
+    returns true if all parts of the enemy are offscreen.
+    """
+    def offscreen(self, mapdata):
+        tilesize = mapdata.getTileSize()
+        mapsize = mapdata.getMapSize()
+        coordinates = self.getCoordinates()
+        if(coordinates[0] < -tilesize[0] or coordinates[0] > mapsize[0]):
+            return True
+        elif(coordinates[1] < -tilesize[1] or coordinates[1] > mapsize[1]):
+            return True
+        else:
+            return False
+
+    def getCoordinates(self):
+        return (self.sprite.rect.left, self.sprite.rect.top)
+
+# A little trick so we can run the game from here in IDLE
+if __name__ == '__main__':
+    execfile("main.py")
+    

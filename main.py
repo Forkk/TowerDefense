@@ -54,7 +54,7 @@ def setup():
     Map = gamemap.GameMap("map1", ScreenSurface)
     # Initialize the enemy manager
     global EnemyManager
-    EnemyManager = enemymanager.EnemyManager(Map.getSize(ScreenSurface))
+    EnemyManager = enemymanager.EnemyManager(Map.getTileSize())
     global GameClock
     GameClock = pygame.time.Clock()
 

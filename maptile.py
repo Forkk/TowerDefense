@@ -59,4 +59,8 @@ class Tile:
             self.sprite.rect = spriterect
         # Add the sprite to the sprite group
         group.add(self.sprite)
+
+# A little trick so we can run the game from here in IDLE
+if __name__ == '__main__':
+    execfile("main.py")
                 
