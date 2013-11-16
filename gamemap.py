@@ -24,8 +24,7 @@ class GameMap:
     S = Where the enemies start coming in
     D = Where the enemies leave the map (their objective).
     """
-    def __init__(self, mapname, surface):
-        
+    def __init__(self, mapname):
         # Read the file in the maps directory with the given name, line by line.
         # The "with" keyword opens the file while handling any exceptions.
         with open(os.path.join("Maps", mapname + ".txt"), "r") as file:
@@ -40,7 +39,7 @@ class GameMap:
                     # The tile list is a 2 dimensional list
                     self.tiles = [[None for idx in range(0, self.numColumns)]
                                   for idx in range(0, self.numRows)]
-                #Otherwise we read the line
+                # Otherwise we read the line
                 else:
                     # Put the line into the tile array
                     for x in range(0, self.numColumns):
@@ -50,13 +49,10 @@ class GameMap:
                             self.start = self.tiles[x][index-2]
                         elif(self.tiles[x][index-2].type == maptile.DESTINATION):
                             self.dest = self.tiles[x][index-2]
-             # Initialize the tile size
-            self.tilewidth = surface.get_width()/self.numColumns
-            self.tileheight = surface.get_height()/self.numRows
-            if(self.tilewidth < self.tileheight):
-                self.tileheight = self.tilewidth
-            else:
-                self.tilewidth = self.tileheight
+
+			# We'll be keeping these constant.
+            self.tilewidth = 64
+            self.tileheight = 64
 
             # Add the tiles to a sprite group
             self.spritegroup = pygame.sprite.Group()

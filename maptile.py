@@ -41,6 +41,7 @@ class Tile:
     def getSprite(self, group, size):
         if(self.sprite == None): # Generate the sprite from an image
             self.sprite = pygame.sprite.Sprite(group)
+
             name = None # The name of the image to use
             if(self.type == PATH):
                 name = "path.png"
@@ -50,14 +51,17 @@ class Tile:
                 name = "end.png"
             else: # Buildable tile by default
                 name = "plot.png"
+
             # The os.path.join() function is used for cross platform compatibility
             self.sprite.image = pygame.image.load(os.path.join("images", name))
             self.sprite.image = pygame.transform.scale(self.sprite.image, size)
+
             # Set the position of the sprite using a rectangle
             width = self.sprite.image.get_width()
             height = self.sprite.image.get_height()
             spriterect = pygame.Rect(self.x*width, self.y*height, width, height)
             self.sprite.rect = spriterect
+
         # Add the sprite to the sprite group
         group.add(self.sprite)
         
