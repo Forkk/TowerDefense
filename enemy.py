@@ -53,6 +53,7 @@ class Enemy:
         self.sprite = pygame.sprite.Sprite()
         self.direction = DIRECTION_NONE
         self.sprite.image = Enemy.down_image
+        self.size = size
         self.sprite.rect = pygame.Rect(x, y, size[0], size[1])
         group.add(self.sprite)
 
@@ -62,8 +63,7 @@ class Enemy:
     parameter is a map object.
     """
     def update(self, time_elapsed, mapdata):
-        # Find the direction we should go
-        self.direction = self.determineDirection(mapdata)
+        
         deltaY = 0
         deltaX = 0
         # Update depending on the current direction
@@ -83,6 +83,43 @@ class Enemy:
 
         # Update the coordinates and rectangle
         self.sprite.rect = self.sprite.rect.move(deltaX, deltaY)
+
+        # If we need to update the direction we're going, do so
+        if(self.shouldChangeDirection(mapdata)):            
+            self.direction = self.determineDirection(mapdata)
+
+    """
+    Determine if we should change direction or not. We change direction
+    if we've passed through the tile we're on.
+    """
+    def shouldChangeDirection(self, mapdata):
+        coordinates = self.getCoordinates()
+        tile_coord = mapdata.getTileCoordinates(coordinates)
+        tile = mapdata.tiles[tile_coord[0]][tile_coord[1]]
+        if(self.direction == DIRECTION_NONE):
+            return True # Always try to move!
+        elif(tile.type == maptile.PLOT): # If we've gone off the path, we need to adjust
+            return True
+        elif(self.direction == DIRECTION_NORTH):
+            # Find the tile below this one
+            if(mapdata.validCoordinates(tile_coord[0], tile_coord[1]+1)):
+                tile = mapdata.tiles[tile_coord[0]][tile_coord[1]+1]
+                if(coordinates[1]+self.size[1] >= tile.y*mapdata.tileheight):
+                    return True
+            return False
+        elif(self.direction == DIRECTION_SOUTH):
+            return True
+        elif(self.direction == DIRECTION_EAST):
+            return True
+        elif(self.direction == DIRECTION_WEST):
+            # Find the tile to the right of this one
+            if(mapdata.validCoordinates(tile_coord[0]+1, tile_coord[1])):
+                tile = mapdata.tiles[tile_coord[0]+1][tile_coord[1]]
+                if(coordinates[0]+self.size[0] <= tile.x*mapdata.tilewidth):
+                    return True
+            return False
+        else:
+            return False
 
     """
     Figure out which direction we should go. This uses a breadth-first

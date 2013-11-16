@@ -111,7 +111,7 @@ class EnemyManager:
                 scheduled_time = index*EnemyManager.spawn_interval+current_time
                 EnemyManager.enemy_queue.put((scheduled_time, new_enemy))
             # Increase the difficulty!
-            EnemyManager.basic_enemies += 1
+            #EnemyManager.basic_enemies = 0
         return retval
 
     """

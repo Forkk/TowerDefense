@@ -102,6 +102,12 @@ class GameMap:
     def getTileCoordinates(self, coordinates):
         return (int(floor(coordinates[0]/self.tilewidth)),
                 int(floor(coordinates[1]/self.tileheight)))
+
+    """
+    Determine if the given tile coordinates (row and column number) are valid.
+    """
+    def validCoordinates(self, x, y):
+        return (x >= 0 and x < self.numColumns and y >= 0 and y < self.numRows)
     
         
 # A little trick so we can run the game from here in IDLE
