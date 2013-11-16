@@ -14,6 +14,9 @@ PATH = 1 # Enemies can access this tile, and no tower can be built on it
 START = 2 # Enemies spawn from this tile, and nothing can be present on it
 DESTINATION = 3 # Enemies go towards this tile, and nothing can be present on it
 
+# List of tiles that count as paths.
+PATH_TILES = [PATH, START, DESTINATION]
+
 class Tile:
 
     """
@@ -44,39 +47,54 @@ class Tile:
 
             x = pos[0]
             y = pos[1]
+            
+            # Find surrounding tiles.
+            upTile =    None if y <= 0 else                tiles[x][y-1].type
+            downTile =  None if y >= len(tiles[x])-1 else  tiles[x][y+1].type
+            leftTile =  None if x <= 0 else                tiles[x-1][y].type 
+            rightTile = None if x >= len(tiles)-1 else     tiles[x+1][y].type 
 
             name = None # The name of the image to use
-            if(self.type == PATH):
+            if self.type == PATH:
                 name = "path_"
-                # Find surrounding tiles.
-                upTile =    tiles[x][y-1].type == PATH
-                downTile =  tiles[x][y+1].type == PATH
-                leftTile =  tiles[x-1][y].type == PATH
-                rightTile = tiles[x+1][y].type == PATH
 
                 cornerType = ""
                 noTop = False
 
-                if upTile: cornerType = "up-"
-                elif downTile: cornerType = "down-"
+                if upTile in PATH_TILES: cornerType = "up-"
+                elif downTile in PATH_TILES: cornerType = "down-"
                 else: noTop = True
 
                 if noTop:       cornerType = "horizontal"
-                elif leftTile:  cornerType += "left"
-                elif rightTile: cornerType += "right"
+                elif leftTile in PATH_TILES:  cornerType += "left"
+                elif rightTile in PATH_TILES: cornerType += "right"
                 else:           cornerType = "vertical"
 
-                print(cornerType)
                 name += cornerType
                 
-            elif(self.type == START):
-                name = "start"
-            elif(self.type == DESTINATION):
-                name = "end"
-            else: # Buildable tile by default
+            elif self.type == START:
+                # The start has 4 directions.
+                # Determine which direction it should face based on which side has a path.
+                direction = ""
+                if upTile in PATH_TILES:      direction = "up"
+                elif downTile in PATH_TILES:  direction = "down"
+                elif leftTile in PATH_TILES:  direction = "left"
+                elif rightTile in PATH_TILES: direction = "right"
+                name = "start_" + direction
+                
+            elif self.type == DESTINATION:
+                # The start has 4 directions.
+                # Determine which direction it should face based on which side has a path.
+                direction = ""
+                if leftTile in PATH_TILES or rightTile in PATH_TILES: direction = "horizontal"
+                else: direction = "vertical"
+                name = "end_" + direction
+
+            else:
                 name = "plot"
 
-            # The os.path.join() function is used for cross platform compatibility
+            # Load the sprite.
+            # TODO: Cache sprite loading (not sure if pygame does this already or not).
             self.sprite.image = pygame.image.load(os.path.join("images", name + ".png"))
             self.sprite.image = pygame.transform.scale(self.sprite.image, size)
 
