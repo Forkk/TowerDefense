@@ -57,9 +57,9 @@ class GameMap:
             # Add the tiles to a sprite group
             self.spritegroup = pygame.sprite.Group()
             size = self.getTileSize()
-            for tilelist in self.tiles:
-                for tile in tilelist:
-                    tile.getSprite(self.spritegroup, size)
+            for x, tilerow in enumerate(self.tiles):
+                for y, tile in enumerate(tilerow):
+                    tile.getSprite(self.spritegroup, self.tiles, (x, y), size)
 
            
     """

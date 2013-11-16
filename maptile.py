@@ -38,22 +38,46 @@ class Tile:
     """
     Add the sprite associated with this tile to the group.
     """
-    def getSprite(self, group, size):
+    def getSprite(self, group, tiles, pos, size):
         if(self.sprite == None): # Generate the sprite from an image
             self.sprite = pygame.sprite.Sprite(group)
 
+            x = pos[0]
+            y = pos[1]
+
             name = None # The name of the image to use
             if(self.type == PATH):
-                name = "path.png"
+                name = "path_"
+                # Find surrounding tiles.
+                upTile =    tiles[x][y-1].type == PATH
+                downTile =  tiles[x][y+1].type == PATH
+                leftTile =  tiles[x-1][y].type == PATH
+                rightTile = tiles[x+1][y].type == PATH
+
+                cornerType = ""
+                noTop = False
+
+                if upTile: cornerType = "up-"
+                elif downTile: cornerType = "down-"
+                else: noTop = True
+
+                if noTop:       cornerType = "horizontal"
+                elif leftTile:  cornerType += "left"
+                elif rightTile: cornerType += "right"
+                else:           cornerType = "vertical"
+
+                print(cornerType)
+                name += cornerType
+                
             elif(self.type == START):
-                name = "start.png"
+                name = "start"
             elif(self.type == DESTINATION):
-                name = "end.png"
+                name = "end"
             else: # Buildable tile by default
-                name = "plot.png"
+                name = "plot"
 
             # The os.path.join() function is used for cross platform compatibility
-            self.sprite.image = pygame.image.load(os.path.join("images", name))
+            self.sprite.image = pygame.image.load(os.path.join("images", name + ".png"))
             self.sprite.image = pygame.transform.scale(self.sprite.image, size)
 
             # Set the position of the sprite using a rectangle
