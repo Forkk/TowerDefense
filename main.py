@@ -4,12 +4,15 @@ main.py - The entry point into the game. This runs the main game loop.
 
 import pygame
 import pygame.key
+import pygame.transform
 import sys
-import gamemap
 import os
+
+import gamemap
 import gamedata
 import userinterface
 import enemymanager
+import camera
 
 """
 The dimensions for the screen. These should remain constant.
@@ -50,8 +53,26 @@ KEYPRESS_SCROLL_MAP = {
         pygame.K_d: (1, 0),
         }
 
+# Another hacky dict for zoom keys.
+# I really need to refactor this module...
+KEYS_ZOOM_VIEW = {
+        # PageUp/PageDown
+        pygame.K_PAGEUP: 1,
+        pygame.K_PAGEDOWN: -1,
+
+        # Plus/Minus
+        pygame.K_PLUS: 1,
+        pygame.K_MINUS: -1,
+        }
+
 # Screen scrolling speed in pixels per tick.
-SCROLL_SPEED = 5
+SCROLL_SPEED = 30
+
+# Zoom speed
+ZOOM_SPEED = 0.05
+
+ZOOM_MIN = 0.2
+ZOOM_MAX = 1.5
 
 """
 This performs initial setup of the game. Any global variables
@@ -86,6 +107,7 @@ def setup():
     global UI
     UI = userinterface.UserInterface()
     Map = gamemap.GameMap("map1")
+    gameSize = Map.getMapSize()
 
     # Now, create the game surface based on the map size.
     GameSurface = pygame.Surface(Map.getMapSize());
@@ -100,11 +122,8 @@ def setup():
     global GameState
     GameState = True
 
-    # Screen position.
-    # This specifies the coordinates of the top left corner of the "screen"
-    # relative to ingame coordinates.
-    global ViewPosition
-    ViewPosition = (0, 0)
+    global GameCamera
+    GameCamera = camera.Camera(gameSize, (SCREEN_WIDTH, SCREEN_HEIGHT))
 
 """
 This handles a single pygame event.
@@ -152,10 +171,15 @@ def update():
     global GameState
     if(GameState):
         # Update the scren scrolling.
+        global GameCamera
         for key, direction in KEYPRESS_SCROLL_MAP.iteritems():
             if pygame.key.get_pressed()[key]:
-                global ViewPosition
-                ViewPosition = (ViewPosition[0] + (direction[0] * SCROLL_SPEED), ViewPosition[1] + (direction[1] * SCROLL_SPEED))
+                GameCamera.move((direction[0] * SCROLL_SPEED, direction[1] * SCROLL_SPEED))
+        for key, zoomfactor in KEYS_ZOOM_VIEW.iteritems():
+            if pygame.key.get_pressed()[key]:
+                GameCamera.zoom(zoomfactor * ZOOM_SPEED * (GameCamera.getZoom()))
+
+        GameCamera.tickUpdate()
         
         # Update the enemies
         livesLost = EnemyManager.update(Map)
@@ -186,11 +210,10 @@ def draw():
     UI.draw(UISurface)
 
     # Now, we draw the game and UI surfaces onto the screen.
-    # TODO: Screen scrolling by drawing the game surface in a different position.
-    ScreenSurface.blit(GameSurface, (-ViewPosition[0], -ViewPosition[1]))
+    ScreenSurface.blit(pygame.transform.scale(GameSurface, GameCamera.getSurfaceSize()), GameCamera.getSurfacePos())
 
     ScreenSurface.blit(UISurface, (0, 0))
-    
+
 
 """
 Handles a single keyboard event (both key down and key up).
