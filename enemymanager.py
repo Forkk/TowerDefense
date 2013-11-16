@@ -97,7 +97,6 @@ class EnemyManager:
                 EnemyManager.enemy_queue.put(current_enemy)
                 spawning = False
             else:
-                print "Enemy spawned"
                 EnemyManager.enemies.append(current_enemy[1])
 
         

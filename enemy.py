@@ -160,6 +160,11 @@ class Enemy:
     """
     def atDestination(self, mapdata):
         coordinates = self.getCoordinates()
+        mapsize = mapdata.getMapSize()
+        # Make sure the coordinates are valid
+        if(coordinates[0] < 0 or coordinates[0] >= mapsize[0] or coordinates[1] < 0
+           or coordinates[1] >= mapsize[1]):
+            return False        
         tile_number = mapdata.getTileCoordinates(coordinates)
         if(mapdata.tiles[tile_number[0]][tile_number[1]].type == maptile.DESTINATION):
             return True

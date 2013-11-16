@@ -57,6 +57,8 @@ def setup():
     EnemyManager = enemymanager.EnemyManager(Map.getTileSize())
     global GameClock
     GameClock = pygame.time.Clock()
+    global GameState
+    GameState = True
 
 """
 This handles a single pygame event.
@@ -98,12 +100,18 @@ Handles any updating of game objects. This is called
 once per game loop.
 """
 def update():
-    # Update the enemies
-    livesLost = EnemyManager.update(Map)
-    Data.lives -= livesLost
-    # Update the UI
-    UI.update(Data)
-   
+    global GameState
+    if(GameState):
+        # Update the enemies
+        livesLost = EnemyManager.update(Map)
+        Data.lives -= livesLost
+        # Update the UI
+        UI.update(Data)
+        # Check if the game is over
+        if(Data.lives <= 0):
+            GameState = False # The game is over
+            UI.showDefeat()
+       
 
 """
 Draws all game objects to the screen. This is called once
