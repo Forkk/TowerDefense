@@ -1,5 +1,5 @@
 """
-enemy.py - The most basic enemy in the game.
+enemybase.py - The most base enemy class
 """
 
 import pygame
@@ -16,6 +16,14 @@ DIRECTION_SOUTH = 2
 DIRECTION_EAST = 3
 DIRECTION_WEST = 4
 DIRECTION_NONE = 5
+
+DIRECTION_MATRIX = {
+                    DIRECTION_NORTH: (0, 1),
+                    DIRECTION_SOUTH: (0, -1),
+                    DIRECTION_EAST: (1, 0),
+                    DIRECTION_WEST: (-1, 0),
+                    DIRECTION_NONE: (0, 0)
+                    }
 
 class EnemyBase:
 
