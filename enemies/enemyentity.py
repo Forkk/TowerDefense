@@ -6,8 +6,9 @@ Created on Nov 16, 2013
 
 import enemybase
 import pygame
+import maptile
 
-class enemyentity():
+class EnemyEntity():
     '''
     The class that represents every entity
     properties:
@@ -121,3 +122,46 @@ class enemyentity():
             self.alive = False
             self.type.onDeath()
         
+    def dead(self):
+        if(self.health <= 0):
+            return True
+        else:
+            return False
+    
+    """
+    Determines if the enemy is offscreen or not. This only
+    returns true if all parts of the enemy are offscreen.
+    """
+    def offscreen(self, mapdata):
+        tilesize = mapdata.getTileSize()
+        mapsize = mapdata.getMapSize()
+        coordinates = self.getCoordinates()
+        if(coordinates[0] < -tilesize[0] or coordinates[0] > mapsize[0]):
+            return True
+        elif(coordinates[1] < -tilesize[1] or coordinates[1] > mapsize[1]):
+            return True
+        else:
+            return False
+
+    def getCoordinates(self):
+        return (self.sprite.rect.left, self.sprite.rect.top)
+
+    """
+    Returns true if the enemy is at the destination.
+    """
+    def atDestination(self, mapdata):
+        coordinates = self.getCoordinates()
+        mapsize = mapdata.getMapSize()
+        # Make sure the coordinates are valid
+        if(coordinates[0] < 0 or coordinates[0] >= mapsize[0] or coordinates[1] < 0
+           or coordinates[1] >= mapsize[1]):
+            return False        
+        tile_number = mapdata.getTileCoordinates(coordinates)
+        if(mapdata.tiles[tile_number[0]][tile_number[1]].type == maptile.DESTINATION):
+            return True
+        else:
+            return False
+
+# A little trick so we can run the game from here in IDLE
+if __name__ == '__main__':
+    execfile("main.py")

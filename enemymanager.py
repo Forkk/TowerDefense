@@ -4,6 +4,7 @@ This module handles the spawning of enemies_list.
 
 import pygame
 import enemies.enemybase
+import enemies.enemytank
 import Queue
 
 
@@ -43,6 +44,13 @@ class EnemyManager:
     The list of enemies_list in the game.
     """
     enemies_list = []
+    
+    """
+    enemy typs list
+    """
+    enemies_types = [
+                     enemies.enemytank.EnemyTank()
+                     ]
 
     """
     The time at which the last update occurred.

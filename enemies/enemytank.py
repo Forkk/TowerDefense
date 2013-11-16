@@ -7,7 +7,7 @@ import enemytype
 import os
 import pygame
 
-class enemytank(enemytype):
+class EnemyTank(enemytype):
     '''
     tank
     '''
