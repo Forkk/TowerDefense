@@ -98,10 +98,12 @@ Handles any updating of game objects. This is called
 once per game loop.
 """
 def update():
+    # Update the enemies
+    livesLost = EnemyManager.update(Map)
+    Data.lives -= livesLost
     # Update the UI
     UI.update(Data)
-    # Update the enemies
-    EnemyManager.update(Map)
+   
 
 """
 Draws all game objects to the screen. This is called once

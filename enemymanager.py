@@ -59,13 +59,22 @@ class EnemyManager:
         self.size = size
         
 
+    """
+    Updates the enemies and schedules waves, if necessary. This returns the number
+    of enemies that have hit the destination.
+    """
     def update(self, mapdata):
+        retval = 0
         # Update the enemies
         for enemy in EnemyManager.enemies:
             enemy.update(pygame.time.get_ticks()-self.last_update_time, mapdata)
             if(enemy.dead() or enemy.offscreen(mapdata)):
                 EnemyManager.enemies.remove(enemy)
                 enemy.sprite.kill() # Remove the sprite from the sprite group
+            if(enemy.atDestination(mapdata)):
+                EnemyManager.enemies.remove(enemy)
+                enemy.sprite.kill()
+                retval += 1
         self.last_update_time = pygame.time.get_ticks()
         current_time = pygame.time.get_ticks()
         # If enough time has passed, spawn a wave
@@ -80,6 +89,7 @@ class EnemyManager:
                 pygame.time.set_timer(EnemyManager.SPAWN_EVENT_BASIC, EnemyManager.spawn_interval*index)
             # Increase the difficulty!
             EnemyManager.basic_enemies += 1
+        return retval
 
     """
     Draw all enemies in the game to the screen.

@@ -155,6 +155,17 @@ class Enemy:
     def getCoordinates(self):
         return (self.sprite.rect.left, self.sprite.rect.top)
 
+    """
+    Returns true if the enemy is at the destination.
+    """
+    def atDestination(self, mapdata):
+        coordinates = self.getCoordinates()
+        tile_number = mapdata.getTileCoordinates(coordinates)
+        if(mapdata.tiles[tile_number[0]][tile_number[1]].type == maptile.DESTINATION):
+            return True
+        else:
+            return False
+
 # A little trick so we can run the game from here in IDLE
 if __name__ == '__main__':
     execfile("main.py")
