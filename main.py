@@ -88,7 +88,7 @@ def setup():
     Map = gamemap.GameMap("map1")
 
     # Now, create the game surface based on the map size.
-    GameSurface = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT));
+    GameSurface = pygame.Surface(Map.getMapSize());
 
     # Initialize the enemy manager
     global EnemyManager

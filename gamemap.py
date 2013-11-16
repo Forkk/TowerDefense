@@ -51,8 +51,8 @@ class GameMap:
                             self.dest = self.tiles[x][index-2]
 
 			# We'll be keeping these constant.
-            self.tilewidth = 64
-            self.tileheight = 64
+            self.tilewidth = 48
+            self.tileheight = 48
 
             # Add the tiles to a sprite group
             self.spritegroup = pygame.sprite.Group()
