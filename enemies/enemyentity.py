@@ -5,6 +5,7 @@ Created on Nov 16, 2013
 '''
 
 import enemybase
+import pygame
 
 class enemyentity():
     '''
@@ -13,36 +14,36 @@ class enemyentity():
     type (instance of EnemyBase)
     speed
     health
-    locX
-    locY
+    loc_x
+    loc_y
     direction
     alive
     dot_time_left
     dot_damage
     '''
 
-    def __init__(self, type):
+    def __init__(self, type, spritegroup):
         '''
         creates a new eneity of the specifid type.
         '''
         self.speed = type.defSpeed
         self.health = type.defHealth
         self.type = type
+        self.sprite = pygame.sprite.Sprite()
+        spritegroup.add(self.sprite)
         
-    def spawn(self, direction, locX, locY):
+    def spawn(self, map, loc_x, loc_y):
         '''
         actually spawns the entity with the given type.
         '''
-        self.locX = locX
-        self.loc = locY
-        self.direction = direction
+        self.loc_x = loc_x
+        self.loc = loc_y
         self.dot_active = False
         self.dot_time = 0
         self.dot_damage = 0
         self.alive = True
-        
-    def draw(self):
-        type.draw(self)
+        self.map = map
+        self.sprite.setRect
         
     def update(self):
         type.update(self)
@@ -56,12 +57,19 @@ class enemyentity():
         
     def move(self):
         '''
-        Moves the entity based on speed, direction, and location
+        Moves the entity based on speed, and location
         '''
-        maskX = enemybase.DIRECTION_MATRIX[self.direction][1];
-        maskY = enemybase.DIRECTION_MATRIX[self.direction][1];
-        self.locX = self.speed * maskX
-        self.locY = self.speed * maskY
+        self.calcDirection()
+        self.sprite.image = self.images[self.direction]
+        deltaX = self.speed * enemybase.DIRECTION_MATRIX[self.direction][1];
+        deltaY = self.speed * enemybase.DIRECTION_MATRIX[self.direction][1];
+        self.loc_x += deltaX
+        self.loc_y += deltaY
+        self.sprite.rect = self.sprite.rect.move(deltaX, deltaY)
+    
+    def calcDirection(self):
+        # calculate the direction
+        pass
         
     def damage(self, ammount):
         '''
