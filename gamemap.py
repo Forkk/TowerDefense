@@ -27,7 +27,7 @@ class GameMap:
     def __init__(self, mapname):
         # Read the file in the maps directory with the given name, line by line.
         # The "with" keyword opens the file while handling any exceptions.
-        with open(os.path.join("Maps", mapname + ".txt"), "r") as file:
+        with open(os.path.join("maps", mapname + ".txt"), "r") as file:
             for index, line in enumerate(file):
                 # If this is the first line, we store it as numRows
                 if(index == 0):

@@ -38,7 +38,7 @@ class UserInterface:
     def __init__(self):
         # Define a font object to use
         pygame.font.init()
-        self.font = pygame.font.Font(os.path.join("UI", "larabie.ttf"), FONT_SIZE, )
+        self.font = pygame.font.Font(os.path.join("ui", "larabie.ttf"), FONT_SIZE, )
         self.gamestate = True # The game is running
 
     def update(self, gamedata):
