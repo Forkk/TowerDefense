@@ -17,7 +17,7 @@ DIRECTION_EAST = 3
 DIRECTION_WEST = 4
 DIRECTION_NONE = 5
 
-class Enemy:
+class EnemyBase:
 
     """
     Set to true if the images have been initialized already.
@@ -38,21 +38,21 @@ class Enemy:
     This also adds the enemy's sprite to the given sprite group.
     """
     def __init__(self, x, y, group, size):
-        if(not Enemy.initialized): # Load the images
-            Enemy.up_image = pygame.image.load(os.path.join("images", "enemy_up.png"))
-            Enemy.up_image = pygame.transform.scale(Enemy.up_image, size)
-            Enemy.down_image = pygame.image.load(os.path.join("images", "enemy_down.png"))
-            Enemy.down_image = pygame.transform.scale(Enemy.down_image, size)
-            Enemy.left_image = pygame.image.load(os.path.join("images", "enemy_left.png"))
-            Enemy.left_image = pygame.transform.scale(Enemy.left_image, size)
-            Enemy.right_image = pygame.image.load(os.path.join("images", "enemy_right.png"))
-            Enemy.right_image = pygame.transform.scale(Enemy.right_image, size)
-            Enemy.initialized = True
+        if(not self.initialized): # Load the images
+            self.up_image = pygame.image.load(os.path.join("images", "enemy_up.png"))
+            self.up_image = pygame.transform.scale(self.up_image, size)
+            self.down_image = pygame.image.load(os.path.join("images", "enemy_down.png"))
+            self.down_image = pygame.transform.scale(self.down_image, size)
+            self.left_image = pygame.image.load(os.path.join("images", "enemy_left.png"))
+            self.left_image = pygame.transform.scale(self.left_image, size)
+            self.right_image = pygame.image.load(os.path.join("images", "enemy_right.png"))
+            self.right_image = pygame.transform.scale(self.right_image, size)
+            self.initialized = True
         self.health = DEFAULT_HEALTH
         self.speed = DEFAULT_SPEED
         self.sprite = pygame.sprite.Sprite()
         self.direction = DIRECTION_NONE
-        self.sprite.image = Enemy.down_image
+        self.sprite.image = self.down_image
         self.size = size
         self.sprite.rect = pygame.Rect(x, y, size[0], size[1])
         group.add(self.sprite)
@@ -69,16 +69,16 @@ class Enemy:
         # Update depending on the current direction
         if(self.direction == DIRECTION_NORTH):
             deltaY = -self.speed*time_elapsed # Go up the screen
-            self.sprite.image = Enemy.up_image
+            self.sprite.image = self.up_image
         elif(self.direction == DIRECTION_SOUTH):
             deltaY = self.speed*time_elapsed
-            self.sprite.image = Enemy.down_image
+            self.sprite.image = self.down_image
         elif(self.direction == DIRECTION_WEST):
             deltaX =-self.speed*time_elapsed
-            self.sprite.image = Enemy.left_image
+            self.sprite.image = self.left_image
         elif(self.direction == DIRECTION_EAST):
             deltaX = self.speed*time_elapsed
-            self.sprite.image = Enemy.right_image
+            self.sprite.image = self.right_image
         # If the direction is NONE, do nothing
 
         # Update the coordinates and rectangle
