@@ -5,6 +5,7 @@ tiles. Tiles can hold an enemy or a tower.
 
 import pygame
 import os
+import random
 
 """
 Constants used to define the type of map tile this is.
@@ -91,7 +92,9 @@ class Tile:
                 name = "end_" + direction
 
             else:
-                name = "plot"
+                name = "plot_" + str(random.randrange(0, 4, 1))
+
+                
 
             # Load the sprite.
             # TODO: Cache sprite loading (not sure if pygame does this already or not).
