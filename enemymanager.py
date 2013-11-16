@@ -4,6 +4,7 @@ This module handles the spawning of enemies.
 
 import pygame
 import enemy
+import Queue
 
 
 
@@ -25,7 +26,7 @@ class EnemyManager:
     """
     The amount of time between waves.
     """
-    wave_interval = 2000
+    wave_interval = 10000
 
     """
     The number of basic enemies to spawn during a given wave.
@@ -36,7 +37,7 @@ class EnemyManager:
     The time between spawning two enemies during a wave. This
     is so that enemies don't overlap on the screen.
     """
-    spawn_interval = 1000
+    spawn_interval = 1500
 
     """
     The list of enemies in the game.
@@ -53,6 +54,17 @@ class EnemyManager:
     """
     spritegroup = pygame.sprite.Group()
 
+    """
+    The priority queue of enemies to be spawned. This queue is arranged
+    on the scheduled time for an enemy to spawn. 
+    """
+    enemy_queue = Queue.PriorityQueue()
+
+    """
+    The last time something was spawned.
+    """
+    last_spawn_time = pygame.time.get_ticks()
+
     def __init__(self, size):
         self.last_wave_time = pygame.time.get_ticks()
         self.last_update_time = pygame.time.get_ticks()
@@ -66,27 +78,39 @@ class EnemyManager:
     def update(self, mapdata):
         retval = 0
         # Update the enemies
-        for enemy in EnemyManager.enemies:
-            enemy.update(pygame.time.get_ticks()-self.last_update_time, mapdata)
-            if(enemy.dead() or enemy.offscreen(mapdata)):
+        for curr in EnemyManager.enemies:
+            curr.update(pygame.time.get_ticks()-self.last_update_time, mapdata)
+            if(curr.dead() or curr.offscreen(mapdata)):
                 EnemyManager.enemies.remove(enemy)
-                enemy.sprite.kill() # Remove the sprite from the sprite group
-            if(enemy.atDestination(mapdata)):
-                EnemyManager.enemies.remove(enemy)
-                enemy.sprite.kill()
+                curr.sprite.kill() # Remove the sprite from the sprite group
+            if(curr.atDestination(mapdata)):
+                EnemyManager.enemies.remove(curr)
+                curr.sprite.kill()
                 retval += 1
         self.last_update_time = pygame.time.get_ticks()
         current_time = pygame.time.get_ticks()
-        # If enough time has passed, spawn a wave
+        # Spawn enemies that need to be spawned
+        spawning = True
+        while(spawning and not EnemyManager.enemy_queue.empty()):
+            current_enemy = EnemyManager.enemy_queue.get()
+            if(current_enemy[0] > current_time): # Then we don't need to spawn yet
+                EnemyManager.enemy_queue.put(current_enemy)
+                spawning = False
+            else:
+                print "Enemy spawned"
+                EnemyManager.enemies.append(current_enemy[1])
+
+        
+        # If enough time has passed, and we're not spawning a wave, spawn a wave
         if(current_time - EnemyManager.last_wave_time >= EnemyManager.wave_interval):
             # Spawn a wave!
+            start = mapdata.getStartingTile()
+            size = mapdata.getTileSize()
             EnemyManager.last_wave_time = current_time
-            # Spawn the number of enemies, seperated by a time
-            # equal to spawn_interval
             for index in range(0, EnemyManager.basic_enemies):
-                # For simplicity, we assume that the time it takes for each of
-                # these statements to run is negligible. 
-                pygame.time.set_timer(EnemyManager.SPAWN_EVENT_BASIC, EnemyManager.spawn_interval*index)
+                new_enemy = enemy.Enemy(start[0], start[1], EnemyManager.spritegroup, size)
+                scheduled_time = index*EnemyManager.spawn_interval+current_time
+                EnemyManager.enemy_queue.put((scheduled_time, new_enemy))
             # Increase the difficulty!
             EnemyManager.basic_enemies += 1
         return retval
