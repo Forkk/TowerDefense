@@ -50,7 +50,7 @@ class GameMap:
                         elif(self.tiles[x][index-2].type == maptile.DESTINATION):
                             self.dest = self.tiles[x][index-2]
 
-			# We'll be keeping these constant.
+            # We'll be keeping these constant.
             self.tilewidth = 48
             self.tileheight = 48
 
@@ -65,7 +65,7 @@ class GameMap:
 
 
     def createPath(self):
-         # calculate path
+        # calculate path
         self.path = []
         self.path.append( (self.start.x, self.start.y) )
         
@@ -79,10 +79,10 @@ class GameMap:
                         self.tiles[tempLoc[0]-1][tempLoc[1]]                                              
                        ]
             for surroundTile in surround :
-               if surroundTile.type in maptile.PATH_TILES and surroundTile.getLoc() != tempLoc and surroundTile.getLoc() != prevLoc:
-                   prevLoc = tempLoc
-                   tempLoc = surroundTile.getLoc() 
-                   break
+                if surroundTile.type in maptile.PATH_TILES and surroundTile.getLoc() != tempLoc and surroundTile.getLoc() != prevLoc:
+                    prevLoc = tempLoc
+                    tempLoc = surroundTile.getLoc() 
+                    break
             self.path.append(tempLoc)
             
         self.path = tuple(self.path)
