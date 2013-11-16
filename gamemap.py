@@ -6,6 +6,7 @@ memory and contains functions for adding towers and enemies.
 import os
 import maptile
 import pygame
+from math import floor
 
 class GameMap:
 
@@ -93,6 +94,15 @@ class GameMap:
 
     def getMapSize(self):
         return (self.tilewidth*self.numColumns, self.tileheight*self.numRows)
+
+    """
+    Get the row and column number of the tile associated with the
+    given coordinates.
+    """
+    def getTileCoordinates(self, coordinates):
+        return (int(floor(coordinates[0]/self.tilewidth)),
+                int(floor(coordinates[1]/self.tileheight)))
+    
         
 # A little trick so we can run the game from here in IDLE
 if __name__ == '__main__':

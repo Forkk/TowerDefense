@@ -24,6 +24,7 @@ class Tile:
     def __init__(self, character, x, y):
         self.x = x
         self.y = y
+        self.visited = False # Used in searches
         # Decode the character for the type of the plot
         if(character == "."):
             self.type = PATH
@@ -59,7 +60,7 @@ class Tile:
             self.sprite.rect = spriterect
         # Add the sprite to the sprite group
         group.add(self.sprite)
-
+        
 # A little trick so we can run the game from here in IDLE
 if __name__ == '__main__':
     execfile("main.py")

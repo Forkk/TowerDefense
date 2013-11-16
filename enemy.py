@@ -5,6 +5,7 @@ enemy.py - The most basic enemy in the game.
 import pygame
 import os
 import Queue
+import maptile
 
 DEFAULT_HEALTH = 100
 DEFAULT_SPEED = 0.1 # This is in number of pixels per second
@@ -61,16 +62,71 @@ class Enemy:
     search to find the goal. Be careful, this can take a while on open maps.
     """
     def determineDirection(self, mapdata):
-        # TODO: Implement this function!
-        return DIRECTION_SOUTH
-
-
-        """
+        
         tilequeue = Queue.Queue()
         # Get the tile we're on
-        tilequeue.put(mapdata.tiles[self.x][self.y])
+        pixel_coordinates = self.getCoordinates()
+        coordinates = mapdata.getTileCoordinates((pixel_coordinates[0],
+                                                  pixel_coordinates[1]))
+        start_tile = mapdata.tiles[coordinates[0]][coordinates[1]]
+        start_tile.visited = True
+        tilequeue.put(start_tile)
         while(not tilequeue.empty()):
-        """
+            tile = tilequeue.get()
+            tile.visited = True
+            if(tile.type == maptile.DESTINATION):
+                # Go backwards until we hit the tile before the start
+                while(tile.parent != None and tile.parent != start_tile):
+                    tile = tile.parent
+                # Figure out the direction
+                retval = self.findDirection(start_tile, tile)
+                # Clear the tile list of parent and visited status
+                for tilelist in mapdata.tiles:
+                    for curr in tilelist:
+                        curr.visited = False
+                        curr.parent = None
+                return retval
+            else:
+                # Get the row and column numbers
+                # Queue the neighboring tiles
+                self.addtoQueue(tilequeue, tile.x-1, tile.y, mapdata, tile)
+                self.addtoQueue(tilequeue, tile.x+1, tile.y, mapdata, tile)
+                self.addtoQueue(tilequeue, tile.x, tile.y+1, mapdata, tile)
+                self.addtoQueue(tilequeue, tile.x, tile.y-1, mapdata, tile)
+        
+                
+
+    """
+    Add the tile to the queue if the coordinates given are valid
+    and if the tile hasn't been visited yet.
+    """
+    def addtoQueue(self, queue, x, y, mapdata, parent):
+        # Make sure the coordinates are valid
+        mapsize = mapdata.getMapSize()
+        if(x >= 0 and x < mapdata.numColumns and y >= 0 and y < mapdata.numRows):
+            tile = mapdata.tiles[x][y]
+            # If this tile hasn't been visited yet, and it's not a plot, add it
+            if(not tile.visited and tile.type != maptile.PLOT):
+                # Update the parent
+                tile.parent = parent
+                queue.put(tile)
+
+    """
+    Find the direction from the first tile to the second tile.
+    The tiles have to be adjacent for this to work.
+    """
+    def findDirection(self, first_tile, second_tile):
+        if(first_tile.x > second_tile.x):
+            return DIRECTION_WEST
+        elif(first_tile.x < second_tile.x):
+            return DIRECTION_EAST
+        elif(first_tile.y > second_tile.y):
+            return DIRECTION_NORTH
+        elif(first_tile.y < second_tile.y):
+            return DIRECTION_SOUTH
+        else:
+            return DIRECTION_NONE
+        
 
     """
     Determines if an enemy is dead or not.
