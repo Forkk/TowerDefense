@@ -3,7 +3,7 @@ This module handles the spawning of enemies.
 """
 
 import pygame
-import enemy
+import enemybase
 import Queue
 
 
@@ -81,7 +81,7 @@ class EnemyManager:
         for curr in EnemyManager.enemies:
             curr.update(pygame.time.get_ticks()-self.last_update_time, mapdata)
             if(curr.dead() or curr.offscreen(mapdata)):
-                EnemyManager.enemies.remove(enemy)
+                EnemyManager.enemies.remove(enemybase)
                 curr.sprite.kill() # Remove the sprite from the sprite group
             if(curr.atDestination(mapdata)):
                 EnemyManager.enemies.remove(curr)
@@ -107,7 +107,7 @@ class EnemyManager:
             size = mapdata.getTileSize()
             EnemyManager.last_wave_time = current_time
             for index in range(0, EnemyManager.basic_enemies):
-                new_enemy = enemy.Enemy(start[0], start[1], EnemyManager.spritegroup, size)
+                new_enemy = enemybase.EnemyBase(start[0], start[1], EnemyManager.spritegroup, size)
                 scheduled_time = index*EnemyManager.spawn_interval+current_time
                 EnemyManager.enemy_queue.put((scheduled_time, new_enemy))
             # Increase the difficulty!
@@ -126,7 +126,7 @@ class EnemyManager:
     """
     def spawnEnemy(self, event, coordinates):
         if(event.type == EnemyManager.SPAWN_EVENT_BASIC):
-            EnemyManager.enemies.append(enemy.Enemy(coordinates[0], coordinates[1],
+            EnemyManager.enemies.append(enemybase.EnemyBase(coordinates[0], coordinates[1],
                                                  EnemyManager.spritegroup, self.size))
 
 # A little trick so we can run the game from here in IDLE
