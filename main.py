@@ -120,10 +120,11 @@ per game loop.
 def draw():
     # Draw the map
     Map.draw(ScreenSurface)
-    # Draw the UI
-    UI.draw(ScreenSurface)
     # Draw the enemies
     EnemyManager.draw(ScreenSurface)
+    # Draw the UI
+    UI.draw(ScreenSurface)
+    
 
 """
 Handles a single keyboard event (both key down and key up).

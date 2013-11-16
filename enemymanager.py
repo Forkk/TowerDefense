@@ -26,7 +26,7 @@ class EnemyManager:
     """
     The amount of time between waves.
     """
-    wave_interval = 10000
+    wave_interval = 2000
 
     """
     The number of basic enemies to spawn during a given wave.
