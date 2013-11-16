@@ -25,7 +25,7 @@ class EnemyManager:
     """
     The amount of time between waves.
     """
-    wave_interval = 5000
+    wave_interval = 2000
 
     """
     The number of basic enemies to spawn during a given wave.
@@ -44,33 +44,34 @@ class EnemyManager:
     enemies = []
 
     """
+    The time at which the last update occurred.
+    """
+    last_update_time = pygame.time.get_ticks()
+
+    """
     The sprites of all enemies in the game.
     """
     spritegroup = pygame.sprite.Group()
 
-    """
-    Whether or not a wave is present.
-    """
-    wave_present = False
-
-    def __init__(self):
+    def __init__(self, size):
         self.last_wave_time = pygame.time.get_ticks()
+        self.last_update_time = pygame.time.get_ticks()
+        self.size = size
+        
 
-    def update(self):
+    def update(self, mapdata):
         # Update the enemies
         for enemy in EnemyManager.enemies:
-            enemy.update()
+            enemy.update(pygame.time.get_ticks()-self.last_update_time, mapdata)
             if(enemy.dead()):
                 EnemyManager.enemies.remove(enemy)
                 enemy.sprite.kill() # Remove the sprite from the sprite group
-            
-        EnemyManager.current_time = pygame.time.get_ticks()
+        self.last_update_time = pygame.time.get_ticks()
+        current_time = pygame.time.get_ticks()
         # If enough time has passed, spawn a wave
-        if(EnemyManager.current_time - EnemyManager.last_wave_time >= EnemyManager.wave_interval):
+        if(current_time - EnemyManager.last_wave_time >= EnemyManager.wave_interval):
             # Spawn a wave!
-            EnemyManager.wave_present = True
-            EnemyManager.last_wave_time = EnemyManager.current_time
-        if(EnemyManager.wave_present): # Push the enemies onto the queue as timers
+            EnemyManager.last_wave_time = current_time
             # Spawn the number of enemies, seperated by a time
             # equal to spawn_interval
             for index in range(0, EnemyManager.basic_enemies):
@@ -87,10 +88,12 @@ class EnemyManager:
         EnemyManager.spritegroup.draw(surface)
 
     """
-    Given a pygame event from the event queue, spawn an enemy (if necessary)
+    Given a pygame event from the event queue, spawn an enemy (if necessary).
+    The coordinates are the x and y coordinates of the starting tile (a tuple).
     """
-    def spawnEnemy(self, event):
+    def spawnEnemy(self, event, coordinates):
         if(event.type == EnemyManager.SPAWN_EVENT_BASIC):
-            EnemyManager.enemies.add(enemy.Enemy())
+            EnemyManager.enemies.append(enemy.Enemy(coordinates[0], coordinates[1],
+                                                 EnemyManager.spritegroup, self.size))
         
 

@@ -7,12 +7,6 @@ import os
 import maptile
 import pygame
 
-"""
-The size of each tile image, in pixels, from the images folder.
-This is NOT the size on screen, the tiles are scaled to fit.
-"""
-TILE_SIZE = 300
-
 class GameMap:
 
     """
@@ -29,7 +23,7 @@ class GameMap:
     S = Where the enemies start coming in
     D = Where the enemies leave the map (their objective).
     """
-    def __init__(self, mapname):
+    def __init__(self, mapname, surface):
         
         # Read the file in the maps directory with the given name, line by line.
         # The "with" keyword opens the file while handling any exceptions.
@@ -50,34 +44,49 @@ class GameMap:
                     # Put the line into the tile array
                     for x in range(0, self.numColumns):
                         self.tiles[x][index-2] = maptile.Tile(line[x], x, index-2)
+                        # Save the start and the end tiles
+                        if(self.tiles[x][index-2].type == maptile.START):
+                            self.start = self.tiles[x][index-2]
+                        elif(self.tiles[x][index-2].type == maptile.DESTINATION):
+                            self.dest = self.tiles[x][index-2]
             # Add the tiles to a sprite group
             self.spritegroup = pygame.sprite.Group()
+            size = self.getSize(surface)
             for tilelist in self.tiles:
                 for tile in tilelist:
-                    tile.getSprite(self.spritegroup)
-            # Store a surface in the object (we need this for scaling later)
-            self.tileSurface = None
+                    tile.getSprite(self.spritegroup, size)
       
 
     """
     Draws the map to the screen (passed in as a surface).
     """
     def draw(self, surface):
-        # We need to scale the map to the size of the tiles. For that we
-        # store a surface and use the transform operation in Pygame.
-        if(self.tileSurface == None): # Initialize it
-            self.tileSurface = pygame.Surface((self.numColumns*TILE_SIZE, self.numRows*TILE_SIZE))
-            self.spritegroup.draw(self.tileSurface)
-            newSize = (surface.get_width(), surface.get_height())
-            self.tileSurface = pygame.transform.scale(self.tileSurface, newSize)
-        # Blit this surface onto the given one (which draws it)
-        surface.blit(self.tileSurface, (0,0))
+        self.spritegroup.draw(surface)
 
     """
     Updates the map. Currently this does nothing.
     """
     def update(self):
         return
+
+    """
+    Get the starting tile for the map (where the enemies come in from).
+    This returns a tuple (x, y).
+    """
+    def getStartingTile(self):
+        return (self.start.x*self.start.sprite.image.get_width(),
+                self.start.y*self.start.sprite.image.get_height())
+
+    def getDestinationTile(self):
+        return (self.dest.x, self.dest.y)
+
+    def getSize(self, screen):
+        width = screen.get_width()/self.numColumns
+        height = screen.get_height()/self.numRows
+        if(width < height):
+            return (width, width)
+        else:
+            return (height, height)
             
         
         

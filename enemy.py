@@ -16,13 +16,13 @@ DIRECTION_EAST = 3
 DIRECTION_WEST = 4
 DIRECTION_NONE = 5
 
-class enemy:
+class Enemy:
 
     """
     Initializes a new enemy at the given x and y coordinates.
     This also adds the enemy's sprite to the given sprite group.
     """
-    def __init__(self, x, y, group):
+    def __init__(self, x, y, group, size):
         self.x = x
         self.y = y
         self.health = DEFAULT_HEALTH
@@ -30,6 +30,7 @@ class enemy:
         self.sprite = pygame.sprite.Sprite()
         self.direction = DIRECTION_NONE
         self.sprite.image = pygame.image.load(os.path.join("images", "enemy.png"))
+        self.sprite.image = pygame.transform.scale(self.sprite.image, size)
         self.sprite.rect = pygame.Rect(self.x, self.y, self.sprite.image.get_width(),
                                        self.sprite.image.get_height())
         group.add(self.sprite)
@@ -79,7 +80,7 @@ class enemy:
     """
     Determines if an enemy is dead or not.
     """
-    def enemyDead(self):
+    def dead(self):
         if(self.health <= 0):
             return True
         else:
