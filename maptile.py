@@ -110,6 +110,12 @@ class Tile:
         # Add the sprite to the sprite group
         group.add(self.sprite)
         
+    def getLoc(self):
+        '''
+        returns a tuple containing this tiles x and y
+        '''
+        return (self.x, self.y)
+        
 # A little trick so we can run the game from here in IDLE
 if __name__ == '__main__':
     execfile("main.py")

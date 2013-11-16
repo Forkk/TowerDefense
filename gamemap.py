@@ -60,6 +60,32 @@ class GameMap:
             for x, tilerow in enumerate(self.tiles):
                 for y, tile in enumerate(tilerow):
                     tile.getSprite(self.spritegroup, self.tiles, (x, y), size)
+            
+            self.createPath()
+
+
+    def createPath(self):
+         # calculate path
+        self.path = []
+        self.path.append( (self.start.x, self.start.y) )
+        
+        endLoc = self.dest.getLoc()
+        prevLoc = tempLoc = self.start.getLoc()
+        while tempLoc != endLoc:
+            surround = [
+                        self.tiles[tempLoc[0]][tempLoc[1]+1],
+                        self.tiles[tempLoc[0]][tempLoc[1]-1],
+                        self.tiles[tempLoc[0]+1][tempLoc[1]],
+                        self.tiles[tempLoc[0]-1][tempLoc[1]]                                              
+                       ]
+            for surroundTile in surround :
+               if surroundTile.type in maptile.PATH_TILES and surroundTile.getLoc() != tempLoc and surroundTile.getLoc() != prevLoc:
+                   prevLoc = tempLoc
+                   tempLoc = surroundTile.getLoc() 
+                   break
+            self.path.append(tempLoc)
+            
+        self.path = tuple(self.path)
 
            
     """
