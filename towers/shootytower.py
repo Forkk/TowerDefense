@@ -184,11 +184,3 @@ class ShootyTurret(ShootyTower):
             hit_enemy.damage(self.getBaseDamage())
 
         self.game.tower_mgr.addShotLine(shot_line)
-        
-#        # Calculate hit.
-#        real_dist = math.pow(origin[0] - self.target.loc_x, 2) + math.pow(origin[0] - self.target.loc_y, 2)
-#        miss_dist = math.tan(error_angle) * real_dist;
-#        
-#        if miss_dist < math.pow(24, 2) :
-#              self.target.damage(self.getBaseDamage())
-
