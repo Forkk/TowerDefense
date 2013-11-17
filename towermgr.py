@@ -4,6 +4,8 @@ import pygame
 import pygame.draw
 
 import towers.shotline
+import towers.towertypes
+import towers.guntower
 
 import math
 
@@ -18,6 +20,17 @@ class TowerManager(object):
 
         # Shot lines is a list of lines representing shots fired by turrets.
         self.shot_lines = []
+
+        self.towerTypes = [
+                towers.towertypes.TowerType("Gun Tower", towers.guntower.GunTower, description="A basic, fast firing, low damage tower."),
+                ]
+        
+
+    def getTowerTypes(self):
+        """
+        Returns a list of available tower types.
+        """
+        return self.towerTypes
 
     def addTower(self, tower):
         """

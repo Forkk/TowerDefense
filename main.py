@@ -15,7 +15,7 @@ import enemymanager
 import towermgr
 import camera
 
-import guntower
+import towers.guntower
 
 """
 The dimensions for the screen. These should remain constant.
@@ -93,12 +93,12 @@ class Game(object):
 
         # Set up a new window.
         self.screen_surface = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-        
-        # Set up the UI.
-        self.ui = userinterface.UserInterface()
 
         # Load the map.
         self.map = gamemap.GameMap(map_name)
+        
+        # Set up the UI.
+        self.ui = userinterface.UserInterface(self)
 
         # Initialize the enemy manager.
         self.enemy_mgr = enemymanager.EnemyManager(self.map.getTileSize())
@@ -107,7 +107,7 @@ class Game(object):
         self.tower_mgr = towermgr.TowerManager(self)
 
         # TODO: Remove when we add a real tower placement system.
-        self.tower_mgr.addTower(guntower.GunTower(self, (1, 3)))
+        self.tower_mgr.addTower(towers.guntower.GunTower(self, (1, 3)))
 
         # Initialize the game clock
         self.clock = pygame.time.Clock()
@@ -230,7 +230,7 @@ class Game(object):
 
         # Clear the UI surface to transparent and then draw the UI
         self.ui_surface.fill(pygame.Color(0, 0, 0, 0))
-        self.ui.draw(self.ui_surface)
+        self.ui.draw(self.ui_surface, self.game_surface, self.fx_surface)
 
         # Blit the effects surface onto the game surface.
         self.game_surface.blit(self.fx_surface, (0, 0))
@@ -250,9 +250,9 @@ class Game(object):
             self.enemy_mgr.spawnEnemy(event, self.map.getStartingTile())
         
     def handleKeyEvent(self, event):
-        if(event.type == pygame.KEYDOWN):
+        if event.type == pygame.KEYDOWN:
             # If the escape key has been pressed, quit the game safely
-            if(event.key == pygame.K_ESCAPE):
+            if event.key == pygame.K_ESCAPE:
                 # Pause on escape.
                 self.paused = not self.paused
         else:

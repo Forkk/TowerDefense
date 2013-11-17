@@ -1,3 +1,5 @@
+# vim: set expandtab ts=4 sw=4 softtabstop=4:
+
 """
 userinterface.py - Handles the game's user interface (UI) and draws it to the
 screen.
@@ -32,17 +34,29 @@ The number of pixels between two lines of text on the screen.
 FONT_LINESPACE = 4
 
 import pygame
+import pygame.transform
+import pygame.image
+
+import os
 
 class UserInterface:
 
-    def __init__(self):
+    def __init__(self, game):
+        self.game = game
+
         # Define a font object to use
         pygame.font.init()
         self.font = pygame.font.Font(os.path.join("ui", "larabie.ttf"), FONT_SIZE, )
         self.gamestate = True # The game is running
 
+        # When placing a tower, this will be set to the coordinates the user wanted
+        # to place it at.
+        self.towerPlacePos = (3, 4)
+
+        self.placement_square = pygame.transform.scale(pygame.image.load(os.path.join("ui", "blue.png")), self.game.map.getTileSize())
+
     def update(self, gamedata):
-        # We save a surface containing the text we want to show.
+        # We save a ui_surface containing the text we want to show.
         self.score = self.font.render("Score: " + str(gamedata.score),
                                       True, FONT_COLOR, FONT_BACKGROUND)
         self.lives = self.font.render("Lives: " + str(gamedata.lives),
@@ -52,24 +66,42 @@ class UserInterface:
         self.defeat = self.font.render("You have been defeated!", True,
                                        FONT_COLOR, FONT_BACKGROUND)
 
-    def draw(self, surface):
+    def draw(self, ui_surface, game_surface, fx_surface):
         # Draw the score in the upper left corner
-        surface.blit(self.score, (FONT_PADDING, FONT_PADDING))
+        ui_surface.blit(self.score, (FONT_PADDING, FONT_PADDING))
         # Put the number of lives below the score
-        surface.blit(self.lives, (FONT_PADDING, FONT_SIZE+FONT_PADDING+FONT_LINESPACE))
+        ui_surface.blit(self.lives, (FONT_PADDING, FONT_SIZE+FONT_PADDING+FONT_LINESPACE))
         # Put the resources in the top right corner
-        surface.blit(self.resources, (surface.get_width()-FONT_PADDING-self.resources.get_width(),
+        ui_surface.blit(self.resources, (ui_surface.get_width()-FONT_PADDING-self.resources.get_width(),
                                       FONT_PADDING))
 
         # If the game has ended, show a defeat message
-        if(not self.gamestate):
-            surface.blit(self.defeat, ((surface.get_width()-self.defeat.get_width())/2,
-                                       (surface.get_height()-self.defeat.get_height())/2))
+        if not self.gamestate:
+            ui_surface.blit(self.defeat, ((ui_surface.get_width()-self.defeat.get_width())/2,
+                                       (ui_surface.get_height()-self.defeat.get_height())/2))
+        
+        # If we're placing a tower, draw the tower menu.
+        if self.towerPlacePos != None:
+            # Draw the selected tile on the fx layer.
+            fx_surface.blit(self.placement_square, self.game.map.getPixelCoordinates(self.towerPlacePos))
+            
+            # Draw the tower selection menu.
+            types = self.game.tower_mgr.getTowerTypes()
+            line_count = len(types)+2
+
+            line_size = self.font.get_linesize()
+            line_pos = ui_surface.get_height() - (line_size * line_count) - FONT_PADDING
+            self.drawText(ui_surface, "Select a tower by pressing its number:", (FONT_PADDING, line_pos))
+            line_pos += line_size
+            for i, ttype in enumerate(types):
+                self.drawText(ui_surface, "<%d> %s" % (i+1, ttype.name), (FONT_PADDING, line_pos))
+                line_pos += line_size
+            self.drawText(ui_surface, "<Escape> Cancel", (FONT_PADDING, line_pos))
+            
+    def drawText(self, surface, text, pos):
+        text_surface = self.font.render(text, True, FONT_COLOR, FONT_BACKGROUND)
+        surface.blit(text_surface, pos)
 
     def showDefeat(self):
-        self.gamestate = False # The game is 
-        
-# A little trick so we can run the game from here in IDLE
-if __name__ == '__main__':
-    execfile("main.py")
-        
+        self.gamestate = False
+
