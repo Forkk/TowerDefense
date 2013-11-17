@@ -7,6 +7,7 @@ Created on Nov 16, 2013
 import enemybase
 import pygame
 import maptile
+import math
 
 class EnemyEntity(object):
     '''
@@ -67,16 +68,17 @@ class EnemyEntity(object):
         '''
         Moves the entity based on speed, and location
         '''
-        if self.needs_dir_update :
-            self.calcDirection()
-        self.sprite.image = self.enemy_type.images[self.direction-1]
-        self.sprite.image = pygame.transform.scale(self.sprite.image, self.game_map.getTileSize())
-        deltaX = self.speed * elapsed * enemybase.DIRECTION_MATRIX[self.direction][0];
-        deltaY = self.speed * elapsed * enemybase.DIRECTION_MATRIX[self.direction][1];
-        self.loc_x += deltaX
-        self.loc_y += deltaY
-        self.sprite.rect = self.sprite.rect.move(deltaX, deltaY)
-        self.updatePathLoc()
+        for x in range(0, elapsed/10) :
+            if self.needs_dir_update :
+                self.calcDirection()
+            self.sprite.image = self.enemy_type.images[self.direction-1]
+            self.sprite.image = pygame.transform.scale(self.sprite.image, self.game_map.getTileSize())
+            deltaX = self.speed * 10 * enemybase.DIRECTION_MATRIX[self.direction][0];
+            deltaY = self.speed * 10 * enemybase.DIRECTION_MATRIX[self.direction][1];
+            self.loc_x += deltaX
+            self.loc_y += deltaY
+            self.sprite.rect = self.sprite.rect.move(deltaX, deltaY)
+            self.updatePathLoc()
     
     def calcDirection(self):
         # calculate the direction
@@ -100,12 +102,14 @@ class EnemyEntity(object):
         
         # temp stuff...
         adder = enemybase.DIRECTION_MATRIX[self.direction]
-        adder = (adder[0] * .5, adder[1] * .5)
+        if self.direction == 4 or self.direction == 1:
+            adder = (adder[0] * .1, adder[1] * .1)
         map_size = self.game_map.getTileSize()
         adder = (map_size[0] * adder[0], map_size[1] * adder[1])
         adder = (self.loc_x + adder[0], self.loc_y + adder[1])
         temp = self.game_map.getTileCoordinates(adder)
-        if self.game_map.getTileCoordinates(adder) != nextLoc :
+            
+        if temp != nextLoc:
             self.path_index += 1
             self.needs_dir_update = True
             #print self.path_index
