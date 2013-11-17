@@ -73,8 +73,8 @@ class EnemyEntity(object):
                 self.calcDirection()
             self.sprite.image = self.enemy_type.getImage(self.direction-1)
             self.sprite.image = pygame.transform.scale(self.sprite.image, self.game_map.getTileSize())
-            deltaX = self.speed * 10 * enemybase.DIRECTION_MATRIX[self.direction][0];
-            deltaY = self.speed * 10 * enemybase.DIRECTION_MATRIX[self.direction][1];
+            deltaX = self.speed * enemybase.DIRECTION_MATRIX[self.direction][0];
+            deltaY = self.speed * enemybase.DIRECTION_MATRIX[self.direction][1];
             self.loc_x += deltaX
             self.loc_y += deltaY
             self.sprite.rect = self.sprite.rect.move(deltaX, deltaY)
