@@ -6,6 +6,8 @@ import pygame.draw
 
 import towerbase
 
+from vector import Vector
+
 import shotline
 
 import math
@@ -41,7 +43,7 @@ class ShootyTower(towerbase.TowerBase):
             self.last_shot = ticks
 
         # If we don't have a target, try to find one.
-        if self.target == None:
+        if self.target == None or not self.target.alive:
             self.findTarget()
 
     def shoot(self):
@@ -126,7 +128,7 @@ class ShootyTower(towerbase.TowerBase):
         Returns true if the tower has a target and is aimed to fire.
         If this and canFire() return true, the tower will fire at its target.
         """
-        return self.target != None
+        return self.target != None and self.target.alive
 
 
 class ShootyTurret(ShootyTower):
@@ -147,7 +149,7 @@ class ShootyTurret(ShootyTower):
     def update(self):
         super(ShootyTurret, self).update()
 
-        if self.target:
+        if self.target and self.target.alive:
             # Calculate turret rotation.
             center = self.getCenter()
             tile_size = self.game.map.getTileSize()
@@ -171,17 +173,22 @@ class ShootyTurret(ShootyTower):
         #pygame.draw.line(fx_surface, pygame.Color(255, 0, 0, 50), self.getCenter(), aim_end, 2)
     
     def shoot(self):
-        # TODO: Damage enemies.
         # Draw the shot line.
         error_angle = (random.random()-0.5)*self.getSpread()
         shot_angle = self.aim_angle + error_angle
-        center = self.getCenter()
-        self.game.tower_mgr.addShotLine(shotline.ShotLine(center, shot_angle))
+        origin = self.getCenter()
+
+        shot_line, hit_enemy = shotline.toEnemy(origin, shot_angle, self.game.enemy_mgr)
+
+        if hit_enemy != None:
+            hit_enemy.damage(self.getBaseDamage())
+
+        self.game.tower_mgr.addShotLine(shot_line)
         
-        # calc hit.
-        real_dist = math.pow(center[0] - self.target.loc_x, 2) + math.pow(center[0] - self.target.loc_y, 2)
-        miss_dist = math.tan(error_angle) * real_dist;
-        
-        if miss_dist < math.pow(24, 2) :
-              self.target.damage(self.getBaseDamage())
+#        # Calculate hit.
+#        real_dist = math.pow(origin[0] - self.target.loc_x, 2) + math.pow(origin[0] - self.target.loc_y, 2)
+#        miss_dist = math.tan(error_angle) * real_dist;
+#        
+#        if miss_dist < math.pow(24, 2) :
+#              self.target.damage(self.getBaseDamage())
 

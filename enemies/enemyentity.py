@@ -50,8 +50,8 @@ class EnemyEntity(object):
         
         # sprite stuff
         self.sprite = pygame.sprite.Sprite()
-        size = game_map.getTileSize()
-        self.sprite.rect = pygame.Rect(self.loc_x, self.loc_y, size[0], size[1])
+        self.size = game_map.getTileSize()
+        self.sprite.rect = pygame.Rect(self.loc_x, self.loc_y, self.size[0], self.size[1])
         self.sprite.image = self.enemy_type.getImage(2)
         spritegroup.add(self.sprite)
         
@@ -187,6 +187,13 @@ class EnemyEntity(object):
             return True
         else:
             return False
+
+    def isTocuhing(self, point):
+        """
+        Returns true if the given point is touching this enemy.
+        """
+        return ((point[0] > self.loc_x and point[0] < self.loc_x + self.size[0]) and
+                (point[1] > self.loc_y and point[1] < self.loc_y + self.size[1]))
 
 # A little trick so we can run the game from here in IDLE
 if __name__ == '__main__':
