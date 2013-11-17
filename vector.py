@@ -20,6 +20,10 @@ class Vector(tuple):
         else:
             raise TypeError("Can only add vectors or numbers to a vector.")
 
+    def __radd__(self, other):
+        return __add__(self, other)
+
+
     def __sub__(self, other):
         """
         Subtracts the components of the given vector or number from this vector's components.
@@ -30,6 +34,10 @@ class Vector(tuple):
             return Vector(self[0] - other, self[1] - other)
         else:
             raise TypeError("Can only subtract vectors or numbers from a vector.")
+
+    def __rsub__(self, other):
+        return __sub__(self, other)
+
 
     def __mul__(self, other):
         """
@@ -42,6 +50,10 @@ class Vector(tuple):
         else:
             raise TypeError("Can only multiply vectors by numbers or other vectors.")
 
+    def __rmul__(self, other):
+        return __mul__(self, other)
+
+
     def __div__(self, other):
         """
         Divides the components of this vector by the given vector or number.
@@ -53,6 +65,10 @@ class Vector(tuple):
         else:
             raise TypeError("Can only divide vectors by numbers or other vectors.")
 
+    def __rdiv__(self, other):
+        return __div__(self, other)
+
+
     def __pow__(self, other):
         """
         Raises the components of this vector to the power of the components of the given vector or number.
@@ -63,6 +79,10 @@ class Vector(tuple):
             return Vector(self[0] ** other, self[1] ** other)
         else:
             raise TypeError("Can only power vectors by numbers or other vectors.")
+
+    def __rpow__(self, other):
+        return __pow__(self, other)
+
 
     def toIntVector(self):
         """
