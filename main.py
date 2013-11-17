@@ -70,6 +70,21 @@ KEYS_ZOOM_VIEW = {
         pygame.K_MINUS: -1,
         }
 
+# Maps number keys to tower selection.
+# Yeah, it's more hacky dicts.
+KEYS_TOWER_SELECT = {
+        pygame.K_1: 1,
+        pygame.K_2: 2,
+        pygame.K_3: 3,
+        pygame.K_4: 4,
+        pygame.K_5: 5,
+        pygame.K_6: 6,
+        pygame.K_7: 7,
+        pygame.K_8: 8,
+        pygame.K_9: 9,
+        pygame.K_0: 10,
+        }
+
 # Screen scrolling speed in pixels per tick.
 SCROLL_SPEED = 30
 
@@ -255,6 +270,14 @@ class Game(object):
             if event.key == pygame.K_ESCAPE:
                 # Pause on escape.
                 self.paused = not self.paused
+        elif event.key in KEYS_TOWER_SELECT:
+            if self.ui.towerPlacePos != None:
+                types = self.tower_mgr.getTowerTypes()
+                selected = KEYS_TOWER_SELECT[event.key]-1
+                if selected < len(types) and self.data.resources >= types[selected].cost:
+                    self.tower_mgr.addTower(self.tower_mgr.getTowerTypes()[selected].tclass(self, self.ui.towerPlacePos))
+                    self.data.resources -= types[selected].cost
+                    self.ui.towerPlacePos = None
         else:
             if(event.type == pygame.KEYUP):
                 return # TODO: Add stuff for key up events here

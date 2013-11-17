@@ -22,7 +22,7 @@ class TowerManager(object):
         self.shot_lines = []
 
         self.towerTypes = [
-                towers.towertypes.TowerType("Gun Tower", towers.guntower.GunTower, description="A basic, fast firing, low damage tower."),
+                towers.towertypes.TowerType("Gun Tower", towers.guntower.GunTower, 50, description="A basic, fast firing, low damage tower."),
                 ]
         
 

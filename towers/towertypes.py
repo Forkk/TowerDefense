@@ -7,8 +7,9 @@ class TowerType(object):
     Class representing information about a certain type of tower.
     """
     
-    def __init__(self, name, tclass, description=DEF_DESCRIPTION):
+    def __init__(self, name, tclass, cost, description=DEF_DESCRIPTION):
         self.name = name
         self.tclass = tclass
+        self.cost = cost
         self.description = description
 
