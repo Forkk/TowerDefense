@@ -8,6 +8,6 @@ members:
 The code for this program can be found on github: https://github.com/ForksAndKnives/TowerDefense/
 
 Features:
-	Page-Up    >> zoom out
-	Page-down  >> zoom in
+	Page-Up    >> zoom in
+	Page-down  >> zoom out
 	Arrow Keys >> Move View
