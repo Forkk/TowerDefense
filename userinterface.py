@@ -95,7 +95,7 @@ class UserInterface:
             line_pos += line_size
             for i, ttype in enumerate(types):
                 if i == 10: i = 0 # Hack to show the user to push the 0 key instead of the 10 key.
-                self.drawText(ui_surface, "<%d> %s" % (i+1, ttype.name), (FONT_PADDING, line_pos))
+                self.drawText(ui_surface, "<%d> %s - %s resources" % (i+1, ttype.name, ttype.cost), (FONT_PADDING, line_pos))
                 line_pos += line_size
             self.drawText(ui_surface, "<Escape> Cancel", (FONT_PADDING, line_pos))
             
