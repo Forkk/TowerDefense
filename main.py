@@ -18,6 +18,8 @@ import camera
 
 import towers.guntower
 
+from vector import Vector
+
 """
 The dimensions for the screen. These should remain constant.
 """
@@ -117,7 +119,7 @@ class Game(object):
         self.ui = userinterface.UserInterface(self)
 
         # Initialize the enemy manager.
-        self.enemy_mgr = enemymanager.EnemyManager(self.map.getTileSize())
+        self.enemy_mgr = enemymanager.EnemyManager(Vector(self.map.getTileSize()))
 
         # Initialize the tower manager.
         self.tower_mgr = towermgr.TowerManager(self)
@@ -213,9 +215,9 @@ class Game(object):
         self.camera.tickUpdate()
 
         mouse1, mouse2, mouse3 = pygame.mouse.get_pressed()
-        if mouse3:
-            mpos = pygame.mouse.get_pos()
-            self.ui.towerPlacePos = self.map.getTileCoordinates(mpos)
+        if mouse1:
+            position = self.camera.toGameCoordinates(pygame.mouse.get_pos())
+            self.ui.towerPlacePos = self.map.getTileCoordinates(position)
 
         # TODO: Update other UI elements.
         # Update the UI
