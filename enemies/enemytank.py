@@ -3,11 +3,11 @@ Created on Nov 16, 2013
 
 @author: AbrarSyed
 '''
-import enemytype
+import enemybase
 import os
 import pygame
 
-class EnemyTank(enemytype.EnemyType):
+class EnemyTank(enemybase.EnemyBase):
     '''
     tank
     '''

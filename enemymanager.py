@@ -5,6 +5,7 @@ This module handles the spawning of enemies_list.
 import pygame
 import enemies.enemybase
 import enemies.enemytank
+import enemies.enemyentity
 import Queue
 
 
@@ -87,9 +88,9 @@ class EnemyManager:
         retval = 0
         # Update the enemies_list
         for curr in EnemyManager.enemies_list:
-            curr.update(pygame.time.get_ticks()-self.last_update_time, mapdata)
+            curr.update(pygame.time.get_ticks()-self.last_update_time)
             if(curr.dead() or curr.offscreen(mapdata)):
-                EnemyManager.enemies_list.remove(enemies.enemybase)
+                EnemyManager.enemies_list.remove(curr)
                 curr.sprite.kill() # Remove the sprite from the sprite group
             if(curr.atDestination(mapdata)):
                 EnemyManager.enemies_list.remove(curr)
@@ -98,6 +99,7 @@ class EnemyManager:
         self.last_update_time = pygame.time.get_ticks()
         current_time = pygame.time.get_ticks()
         # Spawn enemies_list that need to be spawned
+        start = mapdata.getStartingTile()
         spawning = True
         while(spawning and not EnemyManager.enemy_queue.empty()):
             current_enemy = EnemyManager.enemy_queue.get()
@@ -105,17 +107,16 @@ class EnemyManager:
                 EnemyManager.enemy_queue.put(current_enemy)
                 spawning = False
             else:
+                current_enemy[1].spawn(mapdata, EnemyManager.spritegroup)
                 EnemyManager.enemies_list.append(current_enemy[1])
 
         
         # If enough time has passed, and we're not spawning a wave, spawn a wave
         if(current_time - EnemyManager.last_wave_time >= EnemyManager.wave_interval):
             # Spawn a wave!
-            start = mapdata.getStartingTile()
-            size = mapdata.getTileSize()
             EnemyManager.last_wave_time = current_time
             for index in range(0, EnemyManager.basic_enemies):
-                new_enemy = enemies.enemybase.EnemyBase(start[0], start[1], EnemyManager.spritegroup, size)
+                new_enemy = enemies.enemyentity.EnemyEntity(EnemyManager.enemies_types[0])
                 scheduled_time = index*EnemyManager.spawn_interval+current_time
                 EnemyManager.enemy_queue.put((scheduled_time, new_enemy))
             # Increase the difficulty!
@@ -132,10 +133,11 @@ class EnemyManager:
     Given a pygame event from the event queue, spawn an enemy (if necessary).
     The coordinates are the x and y coordinates of the starting tile (a tuple).
     """
-    def spawnEnemy(self, event, coordinates):
+    def spawnEnemy(self, event, mapdata):
         if(event.type == EnemyManager.SPAWN_EVENT_BASIC):
-            EnemyManager.enemies_list.append(enemies.enemybase.EnemyBase(coordinates[0], coordinates[1],
-                                                 EnemyManager.spritegroup, self.size))
+            entity = enemies.enemyentity.EnemyEntity(EnemyManager.enemies_types[0])
+            entity.spawn(mapdata, EnemyManager.spritegroup)
+            EnemyManager.enemies_list.append(entity)
 
 # A little trick so we can run the game from here in IDLE
 if __name__ == '__main__':
