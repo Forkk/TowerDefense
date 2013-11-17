@@ -124,6 +124,13 @@ class GameMap:
     def getTileCoordinates(self, coordinates):
         return (int(floor(coordinates[0]/self.tilewidth)),
                 int(floor(coordinates[1]/self.tileheight)))
+    
+    def getPixelCoordinates(self, coordinates):
+        """
+        Gets the pixel coordinates of the top right corner of the tile at the given position.
+        """
+        return (coordinates[0]*self.tilewidth,
+                coordinates[1]*self.tileheight)
 
     """
     Determine if the given tile coordinates (row and column number) are valid.
@@ -135,8 +142,4 @@ class GameMap:
 # A little trick so we can run the game from here in IDLE
 if __name__ == '__main__':
     execfile("main.py")
-        
 
-        
-        
-        

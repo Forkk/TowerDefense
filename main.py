@@ -12,7 +12,10 @@ import gamemap
 import gamedata
 import userinterface
 import enemymanager
+import towermgr
 import camera
+
+import guntower
 
 """
 The dimensions for the screen. These should remain constant.
@@ -97,8 +100,14 @@ class Game(object):
         # Load the map.
         self.map = gamemap.GameMap(map_name)
 
-        # Initialize the enemy manager
+        # Initialize the enemy manager.
         self.enemy_mgr = enemymanager.EnemyManager(self.map.getTileSize())
+
+        # Initialize the tower manager.
+        self.tower_mgr = towermgr.TowerManager(self)
+
+        # TODO: Remove when we add a real tower placement system.
+        self.tower_mgr.addTower(guntower.GunTower(self, (3, 3)))
 
         # Initialize the game clock
         self.clock = pygame.time.Clock()
@@ -197,6 +206,8 @@ class Game(object):
         livesLost = self.enemy_mgr.update(self.map)
         self.data.lives -= livesLost
 
+        self.tower_mgr.update()
+
 
     def draw(self):
         """
@@ -207,6 +218,9 @@ class Game(object):
 
         # Draw the enemies
         self.enemy_mgr.draw(self.game_surface)
+
+        # Draw the towers
+        self.tower_mgr.draw(self.game_surface)
 
         # Clear the UI surface to transparent and then draw the UI
         self.ui_surface.fill(pygame.Color(0, 0, 0, 0))
@@ -219,10 +233,9 @@ class Game(object):
 
 
     def handleEvent(self, event):
-        if(event.type == pygame.KEYDOWN or event.type == pygame.KEYUP):
+        if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP:
             self.handleKeyEvent(event)
-        if event.type == pygame.QUIT:
-            # Quit the program safely
+        elif event.type == pygame.QUIT:
             self.quit()
         else:
             self.enemy_mgr.spawnEnemy(event, self.map.getStartingTile())
