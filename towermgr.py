@@ -45,6 +45,13 @@ class TowerManager(object):
         """
         self.towers[coords] = None
 
+    def getTowerAt(self, pos):
+        """
+        Gets the tower at the given position.
+        """
+        if pos in self.towers: return self.towers[pos]
+        else: return None
+
     def addShotLine(self, line):
         """
         Adds a new shot line from the given origin to the given endpoint.

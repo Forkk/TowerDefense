@@ -7,6 +7,8 @@ screen.
 
 import os
 
+import maptile
+
 """
 The size of the font to use in the user interface
 """
@@ -82,22 +84,37 @@ class UserInterface:
         
         # If we're placing a tower, draw the tower menu.
         if self.towerPlacePos != None:
+            # TODO: We don't need to update all of this every frame. Only when the selection changes.
+            
             # Draw the selected tile on the fx layer.
             fx_surface.blit(self.placement_square, self.game.map.getPixelCoordinates(self.towerPlacePos))
-            
-            # Draw the tower selection menu.
-            types = self.game.tower_mgr.getTowerTypes()
-            line_count = len(types)+2
 
+            tower_menu_text = ""
+
+            selected_tower = self.game.tower_mgr.getTowerAt(self.towerPlacePos)
+            if selected_tower:
+                tower_menu_text = "TODO: Implement tower menu."
+            elif self.game.map.tiles[self.towerPlacePos[0]][self.towerPlacePos[1]].type == maptile.PLOT:
+                # If there's no tower at the selected position.
+                types = self.game.tower_mgr.getTowerTypes()
+                line_count = len(types)+2
+
+                tower_menu_text = "Select a tower by pressing its number:"
+                for i, ttype in enumerate(types):
+                    i += 1
+                    if i == 10: i = 0 # Hack to show the user to push the 0 key instead of the 10 key.
+                    tower_menu_text += "\n<%d> %s - %s resources" % (i, ttype.name, ttype.cost)
+            else:
+                tower_menu_text = "You can only place towers on empty plots."
+
+            tower_menu_text += "\n<Escape> Cancel"
+
+            lines = tower_menu_text.splitlines()
             line_size = self.font.get_linesize()
-            line_pos = ui_surface.get_height() - (line_size * line_count) - FONT_PADDING
-            self.drawText(ui_surface, "Select a tower by pressing its number:", (FONT_PADDING, line_pos))
-            line_pos += line_size
-            for i, ttype in enumerate(types):
-                if i == 10: i = 0 # Hack to show the user to push the 0 key instead of the 10 key.
-                self.drawText(ui_surface, "<%d> %s - %s resources" % (i+1, ttype.name, ttype.cost), (FONT_PADDING, line_pos))
+            line_pos = ui_surface.get_height() - (line_size * len(lines)) - FONT_PADDING
+            for i, line in enumerate(lines):
+                self.drawText(ui_surface, line, (FONT_PADDING, line_pos))
                 line_pos += line_size
-            self.drawText(ui_surface, "<Escape> Cancel", (FONT_PADDING, line_pos))
             
     def drawText(self, surface, text, pos):
         text_surface = self.font.render(text, True, FONT_COLOR, FONT_BACKGROUND)
