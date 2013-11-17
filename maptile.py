@@ -92,7 +92,7 @@ class Tile:
                 name = "end_" + direction
 
             else:
-                name = "plot_" + str(random.randrange(0, 4, 1))
+                name = "plot_" + str(random.randrange(0, 5, 1))
 
                 
 
