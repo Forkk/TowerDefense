@@ -70,6 +70,7 @@ class EnemyEntity(object):
         if self.needs_dir_update :
             self.calcDirection()
         self.sprite.image = self.enemy_type.images[self.direction-1]
+        self.sprite.image = pygame.transform.scale(self.sprite.image, self.game_map.getTileSize())
         deltaX = self.speed * elapsed * enemybase.DIRECTION_MATRIX[self.direction][0];
         deltaY = self.speed * elapsed * enemybase.DIRECTION_MATRIX[self.direction][1];
         self.loc_x += deltaX
@@ -81,7 +82,7 @@ class EnemyEntity(object):
         # calculate the direction
         current = self.getPathLoc()
         nextLoc = self.getNextLoc()
-        delta = (current[0] - nextLoc[0], current[1] - nextLoc[1])
+        delta = (nextLoc[0] - current[0], nextLoc[1] - current[1])
         for direct, val in enemybase.DIRECTION_MATRIX.iteritems() :
             if val == delta :
                 self.needs_dir_update = False
@@ -100,7 +101,10 @@ class EnemyEntity(object):
         # temp stuff...
         adder = enemybase.DIRECTION_MATRIX[self.direction]
         adder = (adder[0] * .5, adder[1] * .5)
+        map_size = self.game_map.getTileSize()
+        adder = (map_size[0] * adder[0], map_size[1] * adder[1])
         adder = (self.loc_x + adder[0], self.loc_y + adder[1])
+        temp = self.game_map.getTileCoordinates(adder)
         if self.game_map.getTileCoordinates(adder) != nextLoc :
             self.path_index += 1
             self.needs_dir_update = True
@@ -112,7 +116,10 @@ class EnemyEntity(object):
         return self.game_map.path[self.path_index]
     
     def getNextLoc(self):
-        return self.game_map.path[self.path_index + 1] 
+        return self.game_map.path[self.path_index + 1]
+    
+    def getLoc(self):
+        return (self.loc_x, self.loc_y)
         
     def damage(self, ammount):
         '''
@@ -128,6 +135,7 @@ class EnemyEntity(object):
             self.alive = False
             self.enemy_type.onDeath()
         
+    
     def dead(self):
         if(self.health <= 0):
             return True
