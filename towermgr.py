@@ -5,7 +5,7 @@ import pygame.draw
 
 import towers.shotline
 import towers.towertypes
-import towers.guntower
+import towers.basictowers
 
 import math
 
@@ -22,7 +22,8 @@ class TowerManager(object):
         self.shot_lines = []
 
         self.towerTypes = [
-                towers.towertypes.TowerType("Gun Tower", towers.guntower.GunTower, 50, description="A basic, fast firing, low damage tower."),
+                towers.towertypes.TowerType("Gun Tower", towers.basictowers.GunTower, 50, description="A basic, fast firing, low damage tower."),
+                towers.towertypes.TowerType("Gatling Tower", towers.basictowers.GatlingTower, 100, description="Extremely fast fire rate, but low damage and accuracy."),
                 ]
         
 
