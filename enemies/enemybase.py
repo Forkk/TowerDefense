@@ -44,7 +44,10 @@ class EnemyBase(object):
                        )
     
     def getImage(self, direction):
-        return self.images[direction]
+        if direction >= len(self.images) :
+            return self.images[0]
+        else:
+            return self.images[direction]
     
     def initEntity(self, entity):
         pass

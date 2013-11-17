@@ -46,6 +46,7 @@ class EnemyEntity(object):
         self.game_map = game_map
         self.needs_dir_update = True
         self.direction = 2
+        self.atEnd = False
         
         # sprite stuff
         self.sprite = pygame.sprite.Sprite()
@@ -120,6 +121,9 @@ class EnemyEntity(object):
         return self.game_map.path[self.path_index]
     
     def getNextLoc(self):
+        if len(self.game_map.path) <= self.path_index + 1 :
+            self.atEnd = True
+            return self.getPathLoc();
         return self.game_map.path[self.path_index + 1]
     
     def getLoc(self):
@@ -168,6 +172,10 @@ class EnemyEntity(object):
     Returns true if the enemy is at the destination.
     """
     def atDestination(self, mapdata):
+        
+        if self.atEnd:
+            return True;
+        
         coordinates = self.getCoordinates()
         mapsize = mapdata.getMapSize()
         # Make sure the coordinates are valid
@@ -176,6 +184,7 @@ class EnemyEntity(object):
             return False        
         tile_number = mapdata.getTileCoordinates(coordinates)
         if(mapdata.tiles[tile_number[0]][tile_number[1]].type == maptile.DESTINATION):
+            self.atEnd = True
             return True
         else:
             return False

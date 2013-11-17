@@ -14,7 +14,7 @@ class EnemyTank(enemybase.EnemyBase):
         
 class EnemyTruck(enemybase.EnemyBase):
     def __init__(self):
-        super(EnemyTruck, self).__init__("truck", 100, 2)
+        super(EnemyTruck, self).__init__("truck", 50, 2)
 
 class EnemyUFO(enemybase.EnemyBase):
     def __init__(self):
