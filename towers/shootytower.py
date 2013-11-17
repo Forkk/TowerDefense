@@ -17,21 +17,49 @@ class ShootyTower(towerbase.TowerBase):
         super(ShootyTower, self).__init__(game, pos, level)
 
         # The time last time the tower shot.
-        self.lastShot = 0
+        self.last_shot = 0
+
+        # The enemy that the tower is currently targeting.
+        self.target = None
 
         # Update the tower's stats.
         self.updateStats()
 
 
     def update(self):
-        if self.lastShot + self.shot_delay_time < pygame.time.get_ticks():
+        ticks = pygame.time.get_ticks()
+        if self.shouldFire() and self.canFire() and self.last_shot + self.shot_delay_time < ticks:
             self.shoot()
+            self.last_shot = ticks
+
+        # If we don't have a target, try to find one.
+        if self.target == None:
+            self.findTarget()
 
     def shoot(self):
         """
         Causes the tower to shoot.
         """
         print("Bang!")
+        
+
+    def setTarget(self, enemy):
+        """
+        Sets this tower's target to the given enemy.
+        """
+        self.target = enemy
+
+    def findTarget(self):
+        """
+        Finds and sets a new target for the tower.
+        """
+        # TODO: Implement a targeting algorithm that actually takes enemy position into account.
+        enemies = self.game.enemy_mgr.enemies_list
+        if len(enemies) > 0:
+            self.setTarget(enemies[0])
+        else:
+            self.setTarget(None)
+
 
     def updateStats(self):
         """
@@ -84,6 +112,13 @@ class ShootyTower(towerbase.TowerBase):
         overridden by subclasses to implement things such as cooldown times.
         """
         return True
+
+    def shouldFire(self):
+        """
+        Returns true if the tower has a target and is aimed to fire.
+        If this and canFire() return true, the tower will fire at its target.
+        """
+        return self.target != None
 
 
 class ShootyTurret(ShootyTower):
