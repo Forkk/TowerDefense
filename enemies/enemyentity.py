@@ -141,7 +141,6 @@ class EnemyEntity(object):
         if self.health <= 0 :
             self.health = 0
             self.alive = False
-            self.enemy_type.onDeath()
         
     
     def dead(self):

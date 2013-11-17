@@ -173,7 +173,15 @@ class ShootyTurret(ShootyTower):
     def shoot(self):
         # TODO: Damage enemies.
         # Draw the shot line.
-        shot_angle = self.aim_angle + (random.random()-0.5)*self.getSpread()
-        self.game.tower_mgr.addShotLine(shotline.ShotLine(self.getCenter(), shot_angle))
-
+        error_angle = (random.random()-0.5)*self.getSpread()
+        shot_angle = self.aim_angle + error_angle
+        center = self.getCenter()
+        self.game.tower_mgr.addShotLine(shotline.ShotLine(center, shot_angle))
+        
+        # calc hit.
+        real_dist = math.pow(center[0] - self.target.loc_x, 2) + math.pow(center[0] - self.target.loc_y, 2)
+        miss_dist = math.tan(error_angle) * real_dist;
+        
+        if miss_dist < math.pow(24, 2) :
+              self.target.damage(self.getBaseDamage())
 
