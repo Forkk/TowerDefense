@@ -32,16 +32,19 @@ class EnemyBase(object):
     # constant file path thing
     IMAGE_PATH = "images"
 
-    def __init__(self, enemyIdName, health=100, speed=.1):
+    def __init__(self, enemyIdName, health=100, speed=.1, resources=10, load_images=True):
         self.name = enemyIdName
         self.default_health = health
         self.default_speed = speed
-        self.images = (
-                       pygame.image.load(os.path.join(self.IMAGE_PATH, self.name + "_1" + ".png")),
-                       pygame.image.load(os.path.join(self.IMAGE_PATH, self.name + "_2" + ".png")),
-                       pygame.image.load(os.path.join(self.IMAGE_PATH, self.name + "_3" + ".png")),
-                       pygame.image.load(os.path.join(self.IMAGE_PATH, self.name + "_4" + ".png"))
-                       )
+        self.default_resources = resources
+        if load_images:
+            # If this is false, the subclass probably wants to load its own images.
+            self.images = (
+                           pygame.image.load(os.path.join(self.IMAGE_PATH, self.name + "_1" + ".png")),
+                           pygame.image.load(os.path.join(self.IMAGE_PATH, self.name + "_2" + ".png")),
+                           pygame.image.load(os.path.join(self.IMAGE_PATH, self.name + "_3" + ".png")),
+                           pygame.image.load(os.path.join(self.IMAGE_PATH, self.name + "_4" + ".png"))
+                           )
     
     def getImage(self, direction):
         if direction >= len(self.images) :

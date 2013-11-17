@@ -20,6 +20,7 @@ class EnemyEntity(object):
     loc_y
     direction
     alive
+    resources
     dot_time_left
     dot_damage
     '''
@@ -30,27 +31,28 @@ class EnemyEntity(object):
         '''
         self.speed = enemy_type.default_speed
         self.health = enemy_type.default_health
+        self.resources = enemy_type.default_resources
         self.enemy_type = enemy_type
         
-    def spawn(self, game_map, spritegroup):
+    def spawn(self, game, spritegroup):
         '''
         actually spawns the entity with the given type.
         '''
-        start = game_map.getStartingTile()
+        self.game = game
+        start = game.map.getStartingTile()
         self.loc_x = start[0]
         self.loc_y = start[1]
         self.path_index = 0
         self.dot_time_left = 0
         self.dot_damage = 0
         self.alive = True
-        self.game_map = game_map
         self.needs_dir_update = True
         self.direction = 2
         self.atEnd = False
         
         # sprite stuff
         self.sprite = pygame.sprite.Sprite()
-        self.size = game_map.getTileSize()
+        self.size = game.map.getTileSize()
         self.sprite.rect = pygame.Rect(self.loc_x, self.loc_y, self.size[0], self.size[1])
         self.sprite.image = self.enemy_type.getImage(2)
         spritegroup.add(self.sprite)
@@ -73,7 +75,7 @@ class EnemyEntity(object):
             if self.needs_dir_update :
                 self.calcDirection()
             self.sprite.image = self.enemy_type.getImage(self.direction-1)
-            self.sprite.image = pygame.transform.scale(self.sprite.image, self.game_map.getTileSize())
+            self.sprite.image = pygame.transform.scale(self.sprite.image, self.game.map.getTileSize())
             deltaX = self.speed * enemybase.DIRECTION_MATRIX[self.direction][0];
             deltaY = self.speed * enemybase.DIRECTION_MATRIX[self.direction][1];
             self.loc_x += deltaX
@@ -95,7 +97,7 @@ class EnemyEntity(object):
         current = self.getPathLoc()
         nextLoc = self.getNextLoc()
         
-        if self.game_map.getTileCoordinates((self.loc_x, self.loc_y)) == current :
+        if self.game.map.getTileCoordinates((self.loc_x, self.loc_y)) == current :
             # its in the same place it was.. thats fine.
             return
         
@@ -105,26 +107,26 @@ class EnemyEntity(object):
         adder = enemybase.DIRECTION_MATRIX[self.direction]
         if self.direction == 4 or self.direction == 1:
             adder = (adder[0] * .1, adder[1] * .1)
-        map_size = self.game_map.getTileSize()
+        map_size = self.game.map.getTileSize()
         adder = (map_size[0] * adder[0], map_size[1] * adder[1])
         adder = (self.loc_x + adder[0], self.loc_y + adder[1])
-        temp = self.game_map.getTileCoordinates(adder)
+        temp = self.game.map.getTileCoordinates(adder)
             
         if temp != nextLoc:
             self.path_index += 1
             self.needs_dir_update = True
             #print self.path_index
-            #print self.game_map.path[self.path_index]
+            #print self.game.map.path[self.path_index]
         
     
     def getPathLoc(self):
-        return self.game_map.path[self.path_index]
+        return self.game.map.path[self.path_index]
     
     def getNextLoc(self):
-        if len(self.game_map.path) <= self.path_index + 1 :
+        if len(self.game.map.path) <= self.path_index + 1 :
             self.atEnd = True
             return self.getPathLoc();
-        return self.game_map.path[self.path_index + 1]
+        return self.game.map.path[self.path_index + 1]
     
     def getLoc(self):
         return (self.loc_x, self.loc_y)
@@ -141,6 +143,7 @@ class EnemyEntity(object):
         if self.health <= 0 :
             self.health = 0
             self.alive = False
+            self.game.enemyKilled(self)
         
     
     def dead(self):

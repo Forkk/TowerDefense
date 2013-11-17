@@ -228,7 +228,7 @@ class Game(object):
         This updates enemies, towers, and other game logic stuff.
         """
         # TODO: Make this not stupid.
-        livesLost = self.enemy_mgr.update(self.map)
+        livesLost = self.enemy_mgr.update(self)
         self.data.lives -= livesLost
 
         self.tower_mgr.update()
@@ -261,6 +261,14 @@ class Game(object):
         self.screen_surface.blit(pygame.transform.scale(self.game_surface, self.camera.getSurfaceSize()), self.camera.getSurfacePos())
 
         self.screen_surface.blit(self.ui_surface, (0, 0))
+
+
+    def enemyKilled(self, entity):
+        """
+        Called when an enemy is killed.
+        """
+        # TODO: Maybe use events for this?
+        self.data.resources += entity.resources
 
 
     def handleEvent(self, event):

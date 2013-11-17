@@ -91,22 +91,22 @@ class EnemyManager:
     Updates the enemies_list and schedules waves, if necessary. This returns the number
     of enemies_list that have hit the destination.
     """
-    def update(self, mapdata):
+    def update(self, game):
         retval = 0
         # Update the enemies_list
         for curr in EnemyManager.enemies_list:
             curr.update(pygame.time.get_ticks()-self.last_update_time)
-            if(curr.dead() or curr.offscreen(mapdata)):
+            if(curr.dead() or curr.offscreen(game.map)):
                 EnemyManager.enemies_list.remove(curr)
                 curr.sprite.kill() # Remove the sprite from the sprite group
-            if(curr.atDestination(mapdata)):
+            if(curr.atDestination(game.map)):
                 EnemyManager.enemies_list.remove(curr)
                 curr.sprite.kill()
                 retval += 1
         self.last_update_time = pygame.time.get_ticks()
         current_time = pygame.time.get_ticks()
         # Spawn enemies_list that need to be spawned
-        start = mapdata.getStartingTile()
+        start = game.map.getStartingTile()
         spawning = True
         while(spawning and not EnemyManager.enemy_queue.empty()):
             current_enemy = EnemyManager.enemy_queue.get()
@@ -114,7 +114,7 @@ class EnemyManager:
                 EnemyManager.enemy_queue.put(current_enemy)
                 spawning = False
             else:
-                current_enemy[1].spawn(mapdata, EnemyManager.spritegroup)
+                current_enemy[1].spawn(game, EnemyManager.spritegroup)
                 EnemyManager.enemies_list.append(current_enemy[1])
 
         
@@ -141,10 +141,10 @@ class EnemyManager:
     Given a pygame event from the event queue, spawn an enemy (if necessary).
     The coordinates are the x and y coordinates of the starting tile (a tuple).
     """
-    def spawnEnemy(self, event, mapdata):
+    def spawnEnemy(self, event, game):
         if(event.type == EnemyManager.SPAWN_EVENT_BASIC):
             entity = enemies.enemyentity.EnemyEntity(EnemyManager.enemies_types[0])
-            entity.spawn(mapdata, EnemyManager.spritegroup)
+            entity.spawn(game.map, EnemyManager.spritegroup)
             EnemyManager.enemies_list.append(entity)
 
 # A little trick so we can run the game from here in IDLE
