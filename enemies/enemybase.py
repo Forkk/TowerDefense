@@ -36,6 +36,15 @@ class EnemyBase(object):
         self.name = enemyIdName
         self.default_health = health
         self.default_speed = speed
+        self.images = (
+                       pygame.image.load(os.path.join(self.IMAGE_PATH, self.name + "_1" + ".png")),
+                       pygame.image.load(os.path.join(self.IMAGE_PATH, self.name + "_2" + ".png")),
+                       pygame.image.load(os.path.join(self.IMAGE_PATH, self.name + "_3" + ".png")),
+                       pygame.image.load(os.path.join(self.IMAGE_PATH, self.name + "_4" + ".png"))
+                       )
+    
+    def getImage(self, direction):
+        return self.images[direction]
     
     def initEntity(self, entity):
         pass

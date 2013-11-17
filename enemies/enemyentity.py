@@ -51,7 +51,7 @@ class EnemyEntity(object):
         self.sprite = pygame.sprite.Sprite()
         size = game_map.getTileSize()
         self.sprite.rect = pygame.Rect(self.loc_x, self.loc_y, size[0], size[1])
-        self.sprite.image = self.enemy_type.images[2]
+        self.sprite.image = self.enemy_type.getImage(2)
         spritegroup.add(self.sprite)
         
     def update(self, elapsed):
@@ -71,7 +71,7 @@ class EnemyEntity(object):
         for x in range(0, elapsed/10) :
             if self.needs_dir_update :
                 self.calcDirection()
-            self.sprite.image = self.enemy_type.images[self.direction-1]
+            self.sprite.image = self.enemy_type.getImage(self.direction-1)
             self.sprite.image = pygame.transform.scale(self.sprite.image, self.game_map.getTileSize())
             deltaX = self.speed * 10 * enemybase.DIRECTION_MATRIX[self.direction][0];
             deltaY = self.speed * 10 * enemybase.DIRECTION_MATRIX[self.direction][1];

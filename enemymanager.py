@@ -4,7 +4,7 @@ This module handles the spawning of enemies_list.
 
 import pygame
 import enemies.enemybase
-import enemies.enemytank
+import enemies.enemytypes
 import enemies.enemyentity
 import Queue
 
@@ -24,22 +24,27 @@ class EnemyManager:
     a wave of enemies_list occurred.
     """
     last_wave_time = 0
+    
+    """
+    The number of the waves spawned
+    """
+    wave_number = 0
 
     """
     The amount of time between waves.
     """
-    wave_interval = 2000
+    wave_interval = 10000
 
     """
     The number of basic enemies_list to spawn during a given wave.
     """
-    basic_enemies = 1
+    basic_enemies = 3
 
     """
     The time between spawning two enemies_list during a wave. This
     is so that enemies_list don't overlap on the screen.
     """
-    spawn_interval = 1500
+    spawn_interval = 700
 
     """
     The list of enemies_list in the game.
@@ -50,7 +55,9 @@ class EnemyManager:
     enemy typs list
     """
     enemies_types = [
-                     enemies.enemytank.EnemyTank()
+                     enemies.enemytypes.EnemyTank(),
+                     enemies.enemytypes.EnemyTruck(),
+                     enemies.enemytypes.EnemyUFO(),
                      ]
 
     """
@@ -116,11 +123,12 @@ class EnemyManager:
             # Spawn a wave!
             EnemyManager.last_wave_time = current_time
             for index in range(0, EnemyManager.basic_enemies):
-                new_enemy = enemies.enemyentity.EnemyEntity(EnemyManager.enemies_types[0])
+                new_enemy = enemies.enemyentity.EnemyEntity(EnemyManager.enemies_types[EnemyManager.wave_number % 3])
                 scheduled_time = index*EnemyManager.spawn_interval+current_time
                 EnemyManager.enemy_queue.put((scheduled_time, new_enemy))
-            # Increase the difficulty!
-            #EnemyManager.basic_enemies = 0
+            
+            EnemyManager.wave_number += 1
+            
         return retval
 
     """
