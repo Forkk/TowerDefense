@@ -281,10 +281,9 @@ class Game(object):
         
     def handleKeyEvent(self, event):
         if event.type == pygame.KEYDOWN:
-            # If the escape key has been pressed, quit the game safely
+            # If the escape key has been pressed, close the tower selection menu.
             if event.key == pygame.K_ESCAPE:
-                # Pause on escape.
-                self.paused = not self.paused
+                self.ui.towerPlacePos = None
         elif event.key in KEYS_TOWER_SELECT:
             if self.ui.towerPlacePos != None:
                 types = self.tower_mgr.getTowerTypes()
