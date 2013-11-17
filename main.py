@@ -124,9 +124,6 @@ class Game(object):
         # Initialize the tower manager.
         self.tower_mgr = towermgr.TowerManager(self)
 
-        # TODO: Remove when we add a real tower placement system.
-        self.tower_mgr.addTower(towers.guntower.GunTower(self, (1, 3)))
-
         # Initialize the game clock
         self.clock = pygame.time.Clock()
 

@@ -53,7 +53,7 @@ class UserInterface:
 
         # When placing a tower, this will be set to the coordinates the user wanted
         # to place it at.
-        self.towerPlacePos = (3, 4)
+        self.towerPlacePos = None
 
         self.placement_square = pygame.transform.scale(pygame.image.load(os.path.join("ui", "blue.png")), self.game.map.getTileSize())
 
