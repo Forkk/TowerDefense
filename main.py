@@ -114,10 +114,13 @@ class Game(object):
 
         self.camera = camera.Camera(self.map.getMapSize(), (SCREEN_WIDTH, SCREEN_HEIGHT))
 
-        # We'll have 2 surfaces, the UI surface, the game surface.
+        # We'll have 3 surfaces, the UI surface, the effects surface, and the game surface.
         # The game surface will be for drawing the ingame stuff. It'll be translated based on camera position.
         # The UI surface will be for drawing the UI.
+        # The game surface will be for drawing ingame things like turrets and enemies.
+        # The effects surface will be for drawing effects such as bullet lines and explosions.
         self.game_surface = pygame.Surface(self.map.getMapSize());
+        self.fx_surface = pygame.Surface(self.map.getMapSize(), flags=pygame.SRCALPHA);
         self.ui_surface = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), flags=pygame.SRCALPHA);
 
         # If False, the main loop will stop running.
@@ -213,6 +216,9 @@ class Game(object):
         """
         Draws the game and UI.
         """
+        # Clear the effects surface.
+        self.fx_surface.fill(pygame.Color(0, 0, 0, 0))
+
         # Draw the map
         self.map.draw(self.game_surface)
 
@@ -220,11 +226,14 @@ class Game(object):
         self.enemy_mgr.draw(self.game_surface)
 
         # Draw the towers
-        self.tower_mgr.draw(self.game_surface)
+        self.tower_mgr.draw(self.game_surface, self.fx_surface)
 
         # Clear the UI surface to transparent and then draw the UI
         self.ui_surface.fill(pygame.Color(0, 0, 0, 0))
         self.ui.draw(self.ui_surface)
+
+        # Blit the effects surface onto the game surface.
+        self.game_surface.blit(self.fx_surface, (0, 0))
 
         # Now, we draw the game and UI surfaces onto the screen.
         self.screen_surface.blit(pygame.transform.scale(self.game_surface, self.camera.getSurfaceSize()), self.camera.getSurfacePos())

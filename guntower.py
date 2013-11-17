@@ -23,8 +23,8 @@ class GunTower(towers.shootytower.ShootyTurret):
         return 10 # TODO: Handle upgrades and stuff.
 
     def getFireRate(self):
-        return 3*60 # 3 per second
+        return 10*60 # 3 per second
 
     def getSpread(self):
-        return 0.02
+        return 10
 

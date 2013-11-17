@@ -25,7 +25,7 @@ class TowerBase(object):
         """
         raise NotImplemented("update function isn't implemented.")
 
-    def draw(self, surface):
+    def draw(self, surface, fx_surface):
         """
         Draws this tower to the given surface.
         """
@@ -42,4 +42,19 @@ class TowerBase(object):
         Gets the tower's position in tiles.
         """
         return self.pos
+
+    def getSize(self):
+        """
+        Gets the size of the tower.
+        Currently this can only be the size of a tile.
+        """
+        return self.game.map.getTileSize()
+
+    def getCenter(self):
+        """
+        Gets the pixel coordinates of the center of the tower.
+        """
+        size = self.getSize()
+        ppos = self.getPixelPosition()
+        return (ppos[0] + size[0]/2, ppos[1] + size[1]/2)
 
