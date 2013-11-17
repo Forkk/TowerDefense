@@ -150,8 +150,10 @@ class ShootyTurret(ShootyTower):
         if self.target:
             # Calculate turret rotation.
             center = self.getCenter()
-            self.aim_angle = math.degrees(math.atan2(self.target.loc_y - center[1],
-                                                    -self.target.loc_x + center[0]))+180
+            tile_size = self.game.map.getTileSize()
+            target_pos = (self.target.loc_x + tile_size[0]/2, self.target.loc_y + tile_size[1]/2)
+            self.aim_angle = math.degrees(math.atan2(target_pos[1] - center[1],
+                                                    -target_pos[0] + center[0]))+180
 
     def draw(self, surface, fx_surface):
         center = self.getCenter()
