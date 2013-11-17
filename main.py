@@ -209,9 +209,9 @@ class Game(object):
         for key, direction in KEYPRESS_SCROLL_MAP.iteritems():
             if pygame.key.get_pressed()[key]:
                 self.camera.move((direction[0] * SCROLL_SPEED, direction[1] * SCROLL_SPEED))
-        for key, zoomfactor in KEYS_ZOOM_VIEW.iteritems():
-            if pygame.key.get_pressed()[key]:
-                self.camera.zoom(zoomfactor * ZOOM_SPEED * (self.camera.getZoom()))
+#         for key, zoomfactor in KEYS_ZOOM_VIEW.iteritems():
+#             if pygame.key.get_pressed()[key]:
+#                 self.camera.zoom(zoomfactor * ZOOM_SPEED * (self.camera.getZoom()))
         self.camera.tickUpdate()
 
         mouse1, mouse2, mouse3 = pygame.mouse.get_pressed()
@@ -219,7 +219,6 @@ class Game(object):
             position = self.camera.toGameCoordinates(pygame.mouse.get_pos())
             self.ui.towerPlacePos = self.map.getTileCoordinates(position)
 
-        # TODO: Update other UI elements.
         # Update the UI
         self.ui.update(self.data)
 
