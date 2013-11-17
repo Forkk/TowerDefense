@@ -5,6 +5,10 @@ import pygame.time
 
 import towerbase
 
+import math
+
+import utils
+
 class ShootyTower(towerbase.TowerBase):
     """
     Base class for towers that shoot things at enemies.
@@ -128,10 +132,20 @@ class ShootyTurret(ShootyTower):
     
     def __init__(self, game, pos, level=1):
         super(ShootyTurret, self).__init__(game, pos, level)
+        self.aim_angle = 0
 
     def setSprites(self, head, base):
         self.head_sprite = pygame.transform.scale(head, self.game.map.getTileSize())
         self.base_sprite = pygame.transform.scale(base, self.game.map.getTileSize())
+
+    def update(self):
+        super(ShootyTurret, self).update()
+
+        if self.target:
+            # Calculate turret rotation.
+            pixel_pos = self.getPixelPosition()
+            self.aim_angle = math.degrees(math.atan2(self.target.loc_y - pixel_pos[1],
+                                                    -self.target.loc_x + pixel_pos[0]))+180
 
     def draw(self, surface):
         pixel_pos = self.getPixelPosition()
@@ -139,6 +153,8 @@ class ShootyTurret(ShootyTower):
         # Get the tower's position in pixel coordinates.
         surface.blit(self.base_sprite, pixel_pos);
 
-        # TODO: Rotate the head towards the target.
-        surface.blit(self.head_sprite, pixel_pos);
+        head_size = self.head_sprite.get_size()
+        head_pos = (pixel_pos[0] - head_size[0]/2, pixel_pos[1] - head_size[1]/2)
+        surface.blit(utils.rot_center(self.head_sprite, self.aim_angle), (head_pos[0] + head_size[0]/2, head_pos[1] + head_size[1]/2));
+
 
