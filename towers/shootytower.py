@@ -176,7 +176,12 @@ class ShootyTurret(ShootyTower):
         # Draw the shot line.
         error_angle = (random.random()-0.5)*self.getSpread()
         shot_angle = self.aim_angle + error_angle
-        origin = self.getCenter()
+
+        # The origin should be the end of the barrel.
+        # To do this, we get the slope of the barrel's aim line and multiply it by the barrel length.
+        aim_slope = Vector(math.cos(math.radians(shot_angle)), -math.sin(math.radians(shot_angle)))
+        barrel_len = self.getSize()[0] / 2
+        origin = Vector(self.getCenter()) + (aim_slope * barrel_len)
 
         shot_line, hit_enemy = shotline.toEnemy(origin, shot_angle, self.game.enemy_mgr)
 
