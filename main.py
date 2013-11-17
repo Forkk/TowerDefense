@@ -4,6 +4,7 @@ main.py - The entry point into the game. This runs the main game loop.
 
 import pygame
 import pygame.key
+import pygame.mouse
 import pygame.transform
 import sys
 import os
@@ -210,6 +211,11 @@ class Game(object):
             if pygame.key.get_pressed()[key]:
                 self.camera.zoom(zoomfactor * ZOOM_SPEED * (self.camera.getZoom()))
         self.camera.tickUpdate()
+
+        mouse1, mouse2, mouse3 = pygame.mouse.get_pressed()
+        if mouse3:
+            mpos = pygame.mouse.get_pos()
+            self.ui.towerPlacePos = self.map.getTileCoordinates(mpos)
 
         # TODO: Update other UI elements.
         # Update the UI
