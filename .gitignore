@@ -29,3 +29,6 @@ dotcloudconf.py
 # Other bullshit
 Thumbs.db
 DS_Store
+
+# Profiling data
+*.profile
