@@ -73,11 +73,12 @@ def toEnemy(origin, angle, enemy_mgr, shot_range=DEFAULT_RANGE, extra_dist=DEFAU
     # By doing this, we significantly reduce the amount of time it takes to trace the shot to wherever it hits.
     # Unfortunately, setting this value too high may cause the system to be inaccurate.
     check_dist = 16
-    shot_slope = Vector(math.cos(math.radians(angle)), -math.sin(math.radians(angle))) * check_dist
+    shot_slope = Vector(math.cos(math.radians(angle)), -math.sin(math.radians(angle)))
+    check_incr = shot_slope * check_dist
     check_pos = toVector(origin)
     hit_enemy = None
     for x in range(0, shot_range/check_dist):
-        check_pos += shot_slope
+        check_pos += check_incr
         # Check each enemy to see if they've been hit.
         # TODO: Optimize this. We probably don't need to check EVERY single enemy. Maybe just ones nearby?
         for enemy in enemy_mgr.enemies_list:
