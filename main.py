@@ -16,8 +16,6 @@ import enemymanager
 import towermgr
 import camera
 
-import towers.guntower
-
 from vector import Vector
 
 """
@@ -286,7 +284,7 @@ class Game(object):
                 types = self.tower_mgr.getTowerTypes()
                 selected = KEYS_TOWER_SELECT[event.key]-1
                 if selected < len(types) and self.data.resources >= types[selected].cost:
-                    self.tower_mgr.addTower(self.tower_mgr.getTowerTypes()[selected].tclass(self, self.ui.towerPlacePos))
+                    self.tower_mgr.addTower(self.tower_mgr.getTowerTypes()[selected].createTower(self, self.ui.towerPlacePos))
                     self.data.resources -= types[selected].cost
                     self.ui.towerPlacePos = None
         else:

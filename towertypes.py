@@ -7,8 +7,17 @@ class TowerType(object):
     Class representing information about a certain type of tower.
     """
     
-    def __init__(self, name, tclass, description=DEF_DESCRIPTION):
+    def __init__(self, name, tclass, stats, cost, sprites, description=DEF_DESCRIPTION):
         self.name = name
         self.tclass = tclass
+        self.base_stats = stats
+        self.sprites = sprites
+        self.cost = cost
         self.description = description
+
+    def createTower(self, game, pos):
+        """
+        Creates a tower of this type at the given position.
+        """
+        return self.tclass(game, pos, self)
 

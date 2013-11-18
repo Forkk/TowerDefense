@@ -4,27 +4,46 @@ import pygame
 import pygame.time
 import pygame.draw
 
-import towerbase
+from towerbase import TowerBase, TowerStats
 
 from vector import Vector
 
 import shotline
 
+import os
 import math
 import random
 
 import utils
 
-class ShootyTower(towerbase.TowerBase):
+def shootyTowerStats(damage, rate, spread, bps=1):
+    return TowerStats({
+        "damage": damage,
+        "fire_rate": rate,
+        "bullets_per_shot": bps,
+        "spread": spread,
+        })
+
+class ShootyTower(TowerBase):
     """
     Base class for towers that shoot things at enemies.
     Note: If getBaseDamage, getFireRate, or any of the functions
     that return the tower's attributes change at any time other than
     when the tower is upgraded, you must call the updateStats() function.
+
+    Shooty towers need the following tower stats:
+    damage - The base damage per bullet.
+    fire_rate - The tower's fire rate in rounds per minute.
+    bullets_per_shot - How many bullets are fired per shot.
+    spread - The maximum angle of spread for shots.
     """
     
-    def __init__(self, game, pos, level=1):
-        super(ShootyTower, self).__init__(game, pos, level)
+    def __init__(self, game, pos, tower_type):
+        super(ShootyTower, self).__init__(game, pos, tower_type)
+        
+        # Shooty towers need a certain set of stats.
+        if not all(key in self.stats for key in ("damage", "fire_rate", "bullets_per_shot", "spread")):
+            raise ValueError("Missing some stats for shooty tower.")
 
         # The time last time the tower shot.
         self.last_shot = 0
@@ -32,8 +51,11 @@ class ShootyTower(towerbase.TowerBase):
         # The enemy that the tower is currently targeting.
         self.target = None
 
-        # Update the tower's stats.
+        # Reload info from the tower's stats.
         self.updateStats()
+
+        # Recalculate firing delay when stats change.
+        self.stats.addChangeListener(self.statsChanged)
 
 
     def update(self):
@@ -50,8 +72,7 @@ class ShootyTower(towerbase.TowerBase):
         """
         Causes the tower to shoot.
         """
-        print("Bang!")
-        
+        pass
 
     def setTarget(self, enemy):
         """
@@ -71,42 +92,17 @@ class ShootyTower(towerbase.TowerBase):
             self.setTarget(None)
 
 
+    def statsChanged(self, stats, key):
+        self.updateStats()
+
     def updateStats(self):
         """
         Recalculates the tower's firing cooldown and other stats based on
         the stat functions.
+        This should be called every time the tower's stats change.
         """
         # Gets the amount of time (in milliseconds) to delay between shots in shots per second.
-        self.shot_delay_time = 60*1000 / self.getFireRate()
-    
-
-    def getBaseDamage(self):
-        """
-        Gets this tower's current direct damage per shot.
-        This value indicates how much damage each bullet does.
-        This doesn't include splash damage or damage bonuses.
-        """
-        pass
-
-    def getFireRate(self):
-        """
-        Gets the tower's firing rate in shots per minute.
-        """
-        pass
-
-    def getBulletsPerShot(self):
-        """
-        Gets how many bullets this tower fires in a single shot.
-        """
-        return 1
-    
-    def getSpread(self):
-        """
-        Gets a value representing how much a bullet fired from the 
-        tower might deviate from where the tower is aiming.
-        """
-        pass
-
+        self.shot_delay_time = 60*1000 / self.stats["fire_rate"]
 
     def onFire(self):
         """
@@ -136,8 +132,14 @@ class ShootyTurret(ShootyTower):
     A shooty tower with a rotating turret.
     """
     
-    def __init__(self, game, pos, level=1):
-        super(ShootyTurret, self).__init__(game, pos, level)
+    def __init__(self, game, pos, tower_type):
+        super(ShootyTurret, self).__init__(game, pos, tower_type)
+
+        if not all(key in tower_type.sprites for key in ("head", "base")):
+            raise ValueError("Shooty turret missing head or body sprite in tower type data.")
+        else:
+            self.setSprites(tower_type.sprites["head"], tower_type.sprites["base"])
+
         self.aim_angle = 0
 
         self.shot_lines = []
@@ -174,7 +176,7 @@ class ShootyTurret(ShootyTower):
     
     def shoot(self):
         # Draw the shot line.
-        error_angle = (random.random()-0.5)*self.getSpread()
+        error_angle = (random.random()-0.5)*self.stats["spread"]
         shot_angle = self.aim_angle + error_angle
 
         # The origin should be the end of the barrel.
@@ -186,6 +188,6 @@ class ShootyTurret(ShootyTower):
         shot_line, hit_enemy = shotline.toEnemy(origin, shot_angle, self.game.enemy_mgr)
 
         if hit_enemy != None:
-            hit_enemy.damage(self.getBaseDamage())
+            hit_enemy.damage(self.stats["damage"])
 
         self.game.tower_mgr.addShotLine(shot_line)

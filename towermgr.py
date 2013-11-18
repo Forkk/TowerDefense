@@ -2,11 +2,15 @@
 
 import pygame
 import pygame.draw
+import pygame.image
 
 import towers.shotline
 import towers.towertypes
-import towers.basictowers
 
+from towertypes import TowerType
+from towers.shootytower import ShootyTower, ShootyTurret, shootyTowerStats
+
+import os
 import math
 
 class TowerManager(object):
@@ -21,9 +25,19 @@ class TowerManager(object):
         # Shot lines is a list of lines representing shots fired by turrets.
         self.shot_lines = []
 
+        # Load tower sprites.
+        gun_tower_head = pygame.image.load(os.path.join("images", "gun_head_0.png"))
+        gun_tower_base = pygame.image.load(os.path.join("images", "gun_base_0.png"))
+
         self.towerTypes = [
-                towers.towertypes.TowerType("Gun Tower", towers.basictowers.GunTower, 50, description="A basic, fast firing, low damage tower."),
-                towers.towertypes.TowerType("Gatling Tower", towers.basictowers.GatlingTower, 100, description="Extremely fast fire rate, but low damage and accuracy."),
+                TowerType(name="Gun Tower", tclass=ShootyTurret, cost=50, description="A basic, fast firing, low damage tower.",
+                          stats=shootyTowerStats(damage=4, rate=5*60, spread=12),
+                          sprites={"head": gun_tower_head, "base": gun_tower_base}),
+
+                TowerType(name="Gatling Tower", tclass=ShootyTurret, cost=100,
+                          description="Fires exremely fast, but has low damage and accuracy.",
+                          stats=shootyTowerStats(damage=1, rate=20*60, spread=24),
+                          sprites={"head": gun_tower_head, "base": gun_tower_base}),
                 ]
         
 
