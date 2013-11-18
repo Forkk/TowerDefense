@@ -19,7 +19,7 @@ import camera
 
 from effects import EffectsManager
 
-from vector import Vector
+from vector import Vector, toVector
 
 """
 The dimensions for the screen. These should remain constant.
@@ -120,7 +120,7 @@ class Game(object):
         self.ui = userinterface.UserInterface(self)
 
         # Initialize the enemy manager.
-        self.enemy_mgr = enemymanager.EnemyManager(Vector(self.map.getTileSize()))
+        self.enemy_mgr = enemymanager.EnemyManager(toVector(self.map.getTileSize()))
 
         # Initialize the tower manager.
         self.tower_mgr = towermgr.TowerManager(self)
@@ -294,11 +294,14 @@ class Game(object):
             if(event.type == pygame.KEYUP):
                 return # TODO: Add stuff for key up events here
 
+def run():
+    pygame.init()
+    # One global game object.
+    global MainGame
+    MainGame = Game("map1")
+    MainGame.main()
+    pygame.quit()
 
-pygame.init()
-# One global game object.
-global MainGame
-MainGame = Game("map1")
-MainGame.main()
-pygame.quit()
+if __name__ == "__main__":
+    run()
 

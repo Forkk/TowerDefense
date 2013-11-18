@@ -4,7 +4,7 @@
 camera.py - Handles calculations for camera movement and how the game surfaces should be positioned and scaled.
 """
 
-from vector import Vector
+from vector import Vector, toVector
 
 class Camera(object):
     """
@@ -12,8 +12,8 @@ class Camera(object):
     It does all of the math for moving the camera around.
     """
     def __init__(self, game_size, screen_size, min_zoom=0.5, max_zoom=1):
-        self.game_size = Vector(game_size)
-        self.screen_size = Vector(screen_size)
+        self.game_size = toVector(game_size)
+        self.screen_size = toVector(screen_size)
 
         self.min_zoom = min_zoom
         self.max_zoom = max_zoom
@@ -97,7 +97,7 @@ class Camera(object):
         """
         Translates the given screen coordinates to game coordinates.
         """
-        return Vector(coords) - (self.surface_pos * self.zoom_val)
+        return toVector(coords) - (self.surface_pos * self.zoom_val)
 
 
     def setUpdate(self, should_update=True):

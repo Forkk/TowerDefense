@@ -12,7 +12,7 @@ import math
 import random
 
 from damagemarker import DamageMarker
-from vector import Vector
+from vector import Vector, toVector
 
 class EnemyEntity(object):
     '''
@@ -151,7 +151,7 @@ class EnemyEntity(object):
             self.game.enemyKilled(self)
         else:
             hitmark_pos = Vector(self.loc_x, self.loc_y) if hit_pos == None else hit_pos
-            self.game.fx_mgr.addEffect(DamageMarker(ammount, Vector(hitmark_pos)))
+            self.game.fx_mgr.addEffect(DamageMarker(ammount, toVector(hitmark_pos)))
         
     
     def dead(self):

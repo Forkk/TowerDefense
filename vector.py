@@ -2,13 +2,15 @@
 
 import math
 
+def toVector(t):
+    """
+    Converts the given coordinate tuple to a vector.
+    """
+    return Vector(t[0], t[1])
+
 class Vector(tuple):
-    def __new__(cls, x, y=None):
-        # Hacky hacky hackity hack!
-        if y != None:
-            return super(Vector, cls).__new__(cls, (x, y))
-        else:
-            return super(Vector, cls).__new__(cls, (x[0], x[1]))
+    def __new__(cls, x, y):
+        return super(Vector, cls).__new__(cls, (x, y))
 
 
     def __add__(self, other):

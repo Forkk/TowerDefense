@@ -6,7 +6,7 @@ import pygame.draw
 import math
 import copy
 
-from vector import Vector
+from vector import Vector, toVector
 
 from effects import Effect
 
@@ -74,7 +74,7 @@ def toEnemy(origin, angle, enemy_mgr, shot_range=DEFAULT_RANGE, extra_dist=DEFAU
     # Unfortunately, setting this value too high may cause the system to be inaccurate.
     check_dist = 16
     shot_slope = Vector(math.cos(math.radians(angle)), -math.sin(math.radians(angle))) * check_dist
-    check_pos = Vector(origin)
+    check_pos = toVector(origin)
     hit_enemy = None
     for x in range(0, shot_range/check_dist):
         check_pos += shot_slope
@@ -108,7 +108,7 @@ def throughEnemies(origin, angle, enemy_mgr, shot_range=DEFAULT_RANGE, **kwargs)
     # See the comment about check_dist above.
     check_dist = 16
     shot_slope = Vector(math.cos(math.radians(angle)), -math.sin(math.radians(angle)))*check_dist
-    check_pos = Vector(origin)
+    check_pos = toVector(origin)
     hit_enemies = []
 
     # Clone the enemy list. Every time we hit an enemy, we'll remove it from this and
