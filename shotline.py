@@ -69,10 +69,14 @@ def toEnemy(origin, angle, enemy_mgr, shot_range=DEFAULT_RANGE, extra_dist=DEFAU
     It's only for visual effect.
     """
     # Trace the line until it hits something.
-    shot_slope = Vector(math.cos(math.radians(angle)), -math.sin(math.radians(angle)))
+    # check_dist specifies how far to jump between each check. This will reduce how many times we have to check.
+    # By doing this, we significantly reduce the amount of time it takes to trace the shot to wherever it hits.
+    # Unfortunately, setting this value too high may cause the system to be inaccurate.
+    check_dist = 16
+    shot_slope = Vector(math.cos(math.radians(angle)), -math.sin(math.radians(angle))) * check_dist
     check_pos = Vector(origin)
     hit_enemy = None
-    for x in range(0, shot_range):
+    for x in range(0, shot_range/check_dist):
         check_pos += shot_slope
         # Check each enemy to see if they've been hit.
         # TODO: Optimize this. We probably don't need to check EVERY single enemy. Maybe just ones nearby?
@@ -101,7 +105,9 @@ def throughEnemies(origin, angle, enemy_mgr, shot_range=DEFAULT_RANGE, **kwargs)
     You must also pass this function an enemy manager whose enemies should be checked for hits.
     """
     # Trace the line until it hits something.
-    shot_slope = Vector(math.cos(math.radians(angle)), -math.sin(math.radians(angle)))
+    # See the comment about check_dist above.
+    check_dist = 16
+    shot_slope = Vector(math.cos(math.radians(angle)), -math.sin(math.radians(angle)))*check_dist
     check_pos = Vector(origin)
     hit_enemies = []
 
@@ -109,7 +115,7 @@ def throughEnemies(origin, angle, enemy_mgr, shot_range=DEFAULT_RANGE, **kwargs)
     # add it to the hit enemies list.
     enemy_list = copy.copy(enemy_mgr.enemies_list)
     
-    for x in range(0, shot_range):
+    for x in range(0, shot_range/check_dist):
         check_pos += shot_slope
         # Check each enemy to see if they've been hit.
         # TODO: Optimize this. We probably don't need to check EVERY single enemy. Maybe just ones nearby?
