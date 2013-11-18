@@ -1,5 +1,7 @@
 # vim: set expandtab ts=4 sw=4 softtabstop=4:
 
+import math
+
 class Vector(tuple):
     def __new__(cls, x, y=None):
         # Hacky hacky hackity hack!
@@ -12,16 +14,16 @@ class Vector(tuple):
     def __add__(self, other):
         """
         Adds the components of the given vector or number to this vector's components.
+        Note: You can only add a vector to a vector. For performance reasons, adding a number 
+        to both of a vector's fields should be done via the add2() function.
         """
-        if issubclass(other.__class__, tuple):
-            return Vector(self[0] + other[0], self[1] + other[1])
-        elif isinstance(other, (int, long, float, complex)):
-            return Vector(self[0] + other, self[1] + other)
-        else:
-            raise TypeError("Can only add vectors or numbers to a vector.")
+        return Vector(self[0] + other[0], self[1] + other[1])
 
     def __radd__(self, other):
         return __add__(self, other)
+
+    def add2(self, num):
+        return Vector(self[0] + num, self[1] + num)
 
 
     def __sub__(self, other):
@@ -83,6 +85,16 @@ class Vector(tuple):
     def __rpow__(self, other):
         return __pow__(self, other)
 
+
+    def getLength(self):
+        """
+        Returns the length (or magnitude) of the vector.
+        sqrt(x^2 + y^2)
+        """
+        return math.sqrt(self[0]**2 + self[1]**2)
+    
+    def getUnitVector(self):
+        return self / self.getLength()
 
     def toIntVector(self):
         """
