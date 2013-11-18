@@ -9,6 +9,11 @@ import pygame
 import maptile
 import math
 
+import random
+
+from damagemarker import DamageMarker
+from vector import Vector
+
 class EnemyEntity(object):
     '''
     The class that represents every entity
@@ -131,7 +136,7 @@ class EnemyEntity(object):
     def getLoc(self):
         return (self.loc_x, self.loc_y)
         
-    def damage(self, ammount):
+    def damage(self, ammount, hit_pos=None, show_damage_marker=True):
         '''
         Damages the entity and sets its alive state
         '''
@@ -140,10 +145,13 @@ class EnemyEntity(object):
         
         self.health -= ammount
         
-        if self.health <= 0 :
+        if self.health <= 0:
             self.health = 0
             self.alive = False
             self.game.enemyKilled(self)
+        else:
+            hitmark_pos = Vector(self.loc_x, self.loc_y) if hit_pos == None else hit_pos
+            self.game.fx_mgr.addEffect(DamageMarker(ammount, Vector(hitmark_pos)))
         
     
     def dead(self):
