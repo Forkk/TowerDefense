@@ -190,4 +190,5 @@ class ShootyTurret(ShootyTower):
         if hit_enemy != None:
             hit_enemy.damage(self.stats["damage"])
 
-        self.game.tower_mgr.addShotLine(shot_line)
+        self.game.fx_mgr.addEffect(shot_line)
+

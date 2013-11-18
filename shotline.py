@@ -1,21 +1,55 @@
 # vim: set expandtab ts=4 sw=4 softtabstop=4:
 
+import pygame
+import pygame.draw
+
 import math
 import copy
 
 from vector import Vector
 
+from effects import Effect
+
 # The starting alpha of shot lines.
 DEFAULT_ALPHA = 255
 
 # The default speed at which shot lines fade out.
-DEFAULT_FADE_RATE = 80
+DEFAULT_FADE_RATE = 255 * 5
 
 # The default extra distance shot lines travel after hitting.
-DEFAULT_EXTRA_DIST = 1
+DEFAULT_EXTRA_DIST = 10
+
+DEFAULT_THICKNESS = 2
+
+DEFAULT_COLOR = (255, 255, 0)
 
 # The default distance a shot will travel.
 DEFAULT_RANGE = 1000
+
+class ShotLine(Effect):
+    """
+    Class that represents a bullet line shot by a turret.
+    """
+    def __init__(self, origin, end, alpha=DEFAULT_ALPHA, fade_rate=DEFAULT_FADE_RATE, thickness=DEFAULT_THICKNESS, color=DEFAULT_COLOR):
+        """
+        Creates a new shot line from the given origin to the given point.
+        Note: fade rate is measured in alpha units per second.
+        """
+        super(ShotLine, self).__init__()
+        self.origin = origin
+        self.end = end
+        self.alpha = alpha
+        self.fade_rate = float(fade_rate) / 1000
+        self.thickness = thickness
+        self.color = color
+
+    def update(self, delta):
+        self.alpha -= self.fade_rate * delta
+        if self.alpha <= 0:
+            self.game.fx_mgr.removeEffect(self)
+
+    def draw(self, game_surface, fx_surface, ui_surface):
+        pygame.draw.line(fx_surface, (self.color[0], self.color[1], self.color[2], int(self.alpha)), self.origin, self.end, self.thickness)
 
 
 def shotAtAngle(origin, angle, alpha=DEFAULT_ALPHA, fade_rate=DEFAULT_FADE_RATE):
@@ -25,7 +59,7 @@ def shotAtAngle(origin, angle, alpha=DEFAULT_ALPHA, fade_rate=DEFAULT_FADE_RATE)
     shot_end = (origin[0] + math.cos(math.radians(angle))*1000, origin[1] - math.sin(math.radians(angle))*1000)
     return ShotLine(origin, shot_end, alpha, fade_rate)
 
-def toEnemy(origin, angle, enemy_mgr, alpha=DEFAULT_ALPHA, fade_rate=DEFAULT_FADE_RATE, extra_dist=DEFAULT_EXTRA_DIST, shot_range=DEFAULT_RANGE):
+def toEnemy(origin, angle, enemy_mgr, shot_range=DEFAULT_RANGE, extra_dist=DEFAULT_EXTRA_DIST, **kwargs):
     """
     Creates a shot line traveling from the given origin at the given angle until it hits an enemy.
     This will return a tuple containing the shot line and the enemy.
@@ -57,9 +91,9 @@ def toEnemy(origin, angle, enemy_mgr, alpha=DEFAULT_ALPHA, fade_rate=DEFAULT_FAD
     check_pos += shot_slope * extra_dist
 
 
-    return (ShotLine(origin, check_pos, alpha, fade_rate), enemy)
+    return (ShotLine(origin, check_pos, **kwargs), enemy)
 
-def throughEnemies(origin, angle, enemy_mgr, alpha=DEFAULT_ALPHA, fade_rate=DEFAULT_FADE_RATE, shot_range=DEFAULT_RANGE):
+def throughEnemies(origin, angle, enemy_mgr, shot_range=DEFAULT_RANGE, **kwargs):
     """
     Creates a shot line traveling from the given origin at the given angle and passing through all enemies.
     This will return a tuple containing the shot line and a list of enemies that were hit.
@@ -84,19 +118,5 @@ def throughEnemies(origin, angle, enemy_mgr, alpha=DEFAULT_ALPHA, fade_rate=DEFA
                 hit_enemies.append(enemy)
                 enemy_list.remove(enemy)
 
-    return (ShotLine(origin, check_pos, alpha, fade_rate), hit_enemies)
-
-
-class ShotLine(object):
-    """
-    Class that represents a bullet line shot by a turret.
-    """
-    def __init__(self, origin, end, alpha=255, fade_rate=80):
-        """
-        Creates a new shot line from the given origin to the given point.
-        """
-        self.origin = origin
-        self.end = end
-        self.alpha = alpha
-        self.fade_rate = fade_rate
+    return (ShotLine(origin, check_pos, **kwargs), hit_enemies)
 

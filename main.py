@@ -3,6 +3,7 @@ main.py - The entry point into the game. This runs the main game loop.
 """
 
 import pygame
+import pygame.time
 import pygame.key
 import pygame.mouse
 import pygame.transform
@@ -15,6 +16,8 @@ import userinterface
 import enemymanager
 import towermgr
 import camera
+
+from effects import EffectsManager
 
 from vector import Vector
 
@@ -122,6 +125,9 @@ class Game(object):
         # Initialize the tower manager.
         self.tower_mgr = towermgr.TowerManager(self)
 
+        # Initialzie the effects manager.
+        self.fx_mgr = EffectsManager(self)
+
         # Initialize the game clock
         self.clock = pygame.time.Clock()
 
@@ -144,6 +150,8 @@ class Game(object):
         self.paused = False
 
         self.data = gamedata.GameData()
+
+        self.last_tick = 0
 
 
     def main(self):
@@ -187,19 +195,23 @@ class Game(object):
         """
         Performs a single logic tick.
         This means updating the camera position, UI status, 
-        and, if the game isn't paused, the game logic.
+        and the game logic.
         """
+        # TODO: Pass time delta to all the update functions.
+        current_tick = pygame.time.get_ticks()
+        delta = current_tick - self.last_tick if self.last_tick >= 0 else 0
+        self.last_tick = current_tick
+
         # Update the enemies
-        self.gameTick()
+        livesLost = self.enemy_mgr.update(self)
+        self.data.lives -= livesLost
 
-        # Update the UI.
-        self.uiTick()
+        # Update towers
+        self.tower_mgr.update()
 
-    def uiTick(self):
-        """
-        Performs a UI tick.
-        This updates the user interface elements and the camera.
-        """
+        # Update effects
+        self.fx_mgr.update(delta)
+
         # First, update the camera.
         for key, direction in KEYPRESS_SCROLL_MAP.iteritems():
             if pygame.key.get_pressed()[key]:
@@ -217,18 +229,6 @@ class Game(object):
         # Update the UI
         self.ui.update(self.data)
 
-    def gameTick(self):
-        """
-        Performs a game logic tick.
-        This updates enemies, towers, and other game logic stuff.
-        """
-        # TODO: Make this not stupid.
-        livesLost = self.enemy_mgr.update(self)
-        self.data.lives -= livesLost
-
-        self.tower_mgr.update()
-
-
     def draw(self):
         """
         Draws the game and UI.
@@ -244,6 +244,9 @@ class Game(object):
 
         # Draw the towers
         self.tower_mgr.draw(self.game_surface, self.fx_surface)
+
+        # Draw effects
+        self.fx_mgr.draw(self.game_surface, self.fx_surface, self.ui_surface)
 
         # Clear the UI surface to transparent and then draw the UI
         self.ui_surface.fill(pygame.Color(0, 0, 0, 0))

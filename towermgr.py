@@ -4,7 +4,6 @@ import pygame
 import pygame.draw
 import pygame.image
 
-import towers.shotline
 import towers.towertypes
 
 from towertypes import TowerType
@@ -21,9 +20,6 @@ class TowerManager(object):
     def __init__(self, game):
         self.game = game
         self.towers = {}
-
-        # Shot lines is a list of lines representing shots fired by turrets.
-        self.shot_lines = []
 
         # Load tower sprites.
         gun_tower_head = pygame.image.load(os.path.join("images", "gun_head_0.png"))
@@ -67,12 +63,6 @@ class TowerManager(object):
         if pos in self.towers: return self.towers[pos]
         else: return None
 
-    def addShotLine(self, line):
-        """
-        Adds a new shot line from the given origin to the given endpoint.
-        """
-        self.shot_lines += [line]
-
     def update(self):
         """
         Updates all the towers.
@@ -90,12 +80,4 @@ class TowerManager(object):
         """
         for pos, tower in self.towers.iteritems():
             tower.draw(surface, fx_surface)
-
-        surface.lock()
-        for line in self.shot_lines:
-            # Fade the lines.
-            line.alpha -= line.fade_rate
-            if line.alpha <= 0: self.shot_lines.remove(line)
-            else: pygame.draw.line(fx_surface, (255, 255, 0, line.alpha), line.origin, line.end, 2)
-        surface.unlock()
 
